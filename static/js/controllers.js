@@ -1,4 +1,4 @@
-var app = angular.module('brochureApp', ['ngResource']);
+var app = angular.module('brochureApp', ['ngResource', 'ngSanitize']);
 
 app.factory('productFactory', ['$http', function ($http) {
     var urlBase = '/';

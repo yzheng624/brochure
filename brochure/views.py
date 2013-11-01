@@ -48,7 +48,7 @@ def add_item(request):
         store_name = json.loads(request.body).get('store_name', None)
         j = json.loads(request.body)
         url = j.get('url', None)
-        name = j.get('name', None)
+        name = j.get('name', None).decode('string-escape')
         # original_price = j.get('original_price', None).replace(',', '')
         sale_price = j.get('current_price', None).replace(',', '')
         desire_price = j.get('desire_price', None).replace(',', '')

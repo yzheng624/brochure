@@ -87,9 +87,9 @@
                 {% verbatim %}
                 <td><input type="checkbox" /></td>
                 <td><input type="checkbox" /></td>
-                <td><a href="{{ product.fields.url }}">{{ product.fields.name }}</a></td>
-                <td>{{ product.fields.current_price }}</td>
-                <td>{{ product.fields.desire_price }}</td>
+                <td><a href="{{ product.fields.url }}" ng-bind-html="product.fields.name"></a></td>
+                <td ng-bind-html="product.fields.current_price"></td>
+                <td ng-bind-html="product.fields.desire_price"></td>
                 <td><a href="http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords={{ product.fields.name }}" class="btn btn-default" target="_blank">Amazon</a></td>
                 <td>Ok</td>
                 {% endverbatim %}
@@ -149,6 +149,7 @@
     <script src="/static/js/bootstrap.min.js"></script>
     <script src="/static/js/angular.min.js"></script>
     <script src="/static/js/angular-resource.min.js"></script>
+    <script src="/static/js/angular-sanitize.min.js"></script>
     <script src="/static/js/angular-bootstrap.min.js"></script>
     <script src="/static/js/angular-bootstrap-prettify.min.js"></script>
     <script src="/static/js/spin.min.js"></script>
