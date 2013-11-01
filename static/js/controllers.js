@@ -4,21 +4,24 @@ app.factory('productFactory', ['$http', function ($http) {
     var urlBase = '/';
     var productFactory = {};
 
-    productFactory.query = function (url) {
-        data = {'url': url};
-        return $http.post(urlBase + 'query_bestbuy/', data);
+    productFactory.query = function (url, store_name) {
+        data = {'url': url, 'store_name': store_name};
+        return $http.post(urlBase + 'query/', data);
     };
 
-    productFactory.addWatchlist = function (data) {
-        return $http.post(urlBase + 'add_watchlist/', data);
+    productFactory.addItem = function (data, store_name) {
+        data.store_name = store_name;
+        return $http.post(urlBase + 'add_item/', data);
     };
 
-    productFactory.getAll = function () {
-        return $http.get(urlBase + 'get_bestbuy/');
+    productFactory.getAll = function (store_name) {
+        data = {'store_name': store_name};
+        return $http.post(urlBase + 'get_items/', data);
     };
 
-    productFactory.getWatchlist = function () {
-        return $http.get(urlBase + 'get_watchlist/');
+    productFactory.getWatchlist = function (store_name) {
+        data = {'store_name': store_name};
+        return $http.post(urlBase + 'get_watchlist/', data);
     };
 
     return productFactory;
@@ -41,12 +44,14 @@ app.controller('brochureController', ['$scope', 'productFactory', function ($sco
             zIndex : 2e9, // The z-index (defaults to 2000000000)
             top : $(window).height()/2.5, // Manual positioning in viewport
             left : "auto"
-        };
-    $scope.bestBuyClicked = function () {
+    };
+    $scope.itemClicked = function (store_name) {
+        $scope.store_name = store_name;
+        $('.list-group-item').removeClass('active');
         var target = $("body")[0];
         $scope.spinner = Spinner(opts).spin(target);
-        productFactory.getAll().success(function (products) {
-            productFactory.getWatchlist().success(function (watchlist) {
+        productFactory.getAll(store_name).success(function (products) {
+            productFactory.getWatchlist(store_name).success(function (watchlist) {
                 for (var i = 0; i < products.length; i++) {
                     for (var j = 0; j < watchlist.length; j++) {
                         if (products[i].pk === watchlist[j].fields.product) {
@@ -58,7 +63,7 @@ app.controller('brochureController', ['$scope', 'productFactory', function ($sco
             $scope.spinner.stop();
             $scope.products = products;
         });
-        $('#bestBuyList').addClass('active');
+        $('#' + store_name +'List').addClass('active');
         $('#welcome').hide();
         $('#menubar').show();
         $('#hr').show();
@@ -75,7 +80,7 @@ app.controller('brochureController', ['$scope', 'productFactory', function ($sco
     $scope.addLinkNext = function () {
         var target = $("body")[0];
         $scope.spinner = Spinner(opts).spin(target);
-        productFactory.query($scope.new.queryUrl).success(function (product) {
+        productFactory.query($scope.new.queryUrl, $scope.store_name).success(function (product) {
             $scope.spinner.stop();
             url = $scope.new.queryUrl;
             $scope.new = product;
@@ -95,9 +100,9 @@ app.controller('brochureController', ['$scope', 'productFactory', function ($sco
             'name': $scope.new.name,
             'email': $scope.new.email
         };
-        productFactory.addWatchlist(data).success(function (info) {
-            productFactory.getAll().success(function (products) {
-                productFactory.getWatchlist().success(function (watchlist) {
+        productFactory.addItem(data, $scope.store_name).success(function (info) {
+            productFactory.getAll($scope.store_name).success(function (products) {
+                productFactory.getWatchlist($scope.store_name).success(function (watchlist) {
                     for (var i = 0; i < products.length; i++) {
                         for (var j = 0; j < watchlist.length; j++) {
                             if (products[i].pk === watchlist[j].fields.product) {

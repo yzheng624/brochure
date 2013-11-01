@@ -1,13 +1,10 @@
 from spider_base import BaseSpider
 import re
 import requests
-from brochure.models import *
 
-
-class BestBuySpider(BaseSpider):
+class StaplesSpider(BaseSpider):
     def __init__(self):
         BaseSpider.__init__(self)
-        self.api_key = '5q7nvwnwfm5bc9xk7qbgb3gb'
 
     def run(self):
         products = Product.objects.all()
@@ -24,10 +21,13 @@ class BestBuySpider(BaseSpider):
         p = {}
         r = requests.get(url, headers=self.headers)
         html = r.content
-        price = re.findall(r'price">(?:\$|<span class="denominator">\$</span>)([\d.,]+)(</span>|</div>)', html, re.DOTALL)
-        name = re.findall(r'<meta property="og:title" content="(.*?)"/>', html, re.DOTALL)
-        p['name'] = name[0].split('"')[0]
-        p['current_price'] = price[0][0]
+        f = open('s.html', 'w')
+        f.write(html)
+        price = re.findall(r'<span class="finalPrice">\$([\d.,]+).</span>', html, re.DOTALL)
+        print price
+        name = re.findall(r'<title>(.*?)</title>', html, re.DOTALL)
+        p['name'] = name[0].split('|')[0]
+        p['current_price'] = price[0]
         # p['original_price'] = price[1][0]
         return p
 
@@ -40,6 +40,6 @@ class BestBuySpider(BaseSpider):
         return pid
 
 if __name__ == '__main__':
-    u = 'http://www.bestbuy.com/site/duke-nukem-forever-windows/2435079.p?id=1218328201673&skuId=2435079&strId=1436&strClr=true&ld=39.42216&lg=-76.78031&rd=25'
-    b = BestBuySpider()
-    print b.query(u)
+    u = 'http://www.staples.com/Toshiba-C855-S5350-156-Laptop/product_984635'
+    m = StaplesSpider()
+    print m.query(u)

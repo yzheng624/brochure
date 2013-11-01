@@ -9,10 +9,9 @@ admin.autodiscover()
 urlpatterns = patterns('',
     # Examples:
     url(r'^$', 'brochure.views.home'),
-    url(r'^query_bestbuy/$', 'brochure.views.query_bestbuy'),
-    url(r'^add_bestbuy/$', 'brochure.views.add_bestbuy'),
-    url(r'^get_bestbuy/$', 'brochure.views.get_bestbuy'),
-    url(r'^add_watchlist/$', 'brochure.views.add_watchlist'),
+    url(r'^query/$', 'brochure.views.query'),
+    url(r'^get_items/$', 'brochure.views.get_items'),
+    url(r'^add_item/$', 'brochure.views.add_item'),
     url(r'^get_watchlist/$', 'brochure.views.get_watchlist'),
 
     # Uncomment the admin/doc line below to enable admin documentation:
