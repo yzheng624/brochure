@@ -5,6 +5,15 @@ import requests
 class StaplesSpider(BaseSpider):
     def __init__(self):
         BaseSpider.__init__(self)
+        self.bot = requests.session()
+        data = {
+            'zipCode': 21218,
+            'storeId': 10001,
+            'langId': -1,
+            'URL': 'StaplesCategoryDisplay?catalogIdentifier=2&langId=-1&identifier=CL141985&storeId=10001',
+            'errorUrl': 'zipcode'
+        }
+        self.bot.post('http://www.staples.com/office/supplies/StaplesZipCodeAdd?', data, headers=self.headers)
 
     def run(self):
         products = Product.objects.all()
@@ -19,7 +28,7 @@ class StaplesSpider(BaseSpider):
 
     def query(self, url):
         p = {}
-        r = requests.get(url, headers=self.headers)
+        r = self.bot.get(url, headers=self.headers)
         html = r.content
         f = open('s.html', 'w')
         f.write(html)

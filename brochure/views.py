@@ -2,6 +2,7 @@ from django.shortcuts import render_to_response, HttpResponse
 from spider.bestbuy import BestBuySpider
 from spider.msstore import MSStoreSpider
 from spider.radioshack import RadioShackSpider
+from spider.staples import StaplesSpider
 import json
 from django.views.decorators.csrf import csrf_exempt
 from brochure.models import *
@@ -26,6 +27,9 @@ def query(request):
         elif store_name == 'radio':
             radio = RadioShackSpider()
             product = radio.query(url)
+        elif store_name == 'staples':
+            staple = StaplesSpider()
+            product = staple.query(url)
         return HttpResponse(json.dumps(product), content_type="application/json")
 
 @csrf_exempt
