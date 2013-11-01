@@ -16,11 +16,11 @@ class BestBuySpider(BaseSpider):
         p = {}
         r = requests.get(url, headers=self.headers)
         html = r.content
-        price = re.findall(r'<span class="price">\$([\d.]+)</span>', html)
-        name = re.findall(r'<meta property="og:title" content="(.+)"/>', html)
-        p['name'] = name[0]
-        p['current_price'] = price[0]
-        p['original_price'] = price[1]
+        price = re.findall(r'price">(?:\$|<span class="denominator">\$</span>)([\d.,]+)(</span>|</div>)', html, re.DOTALL)
+        name = re.findall(r'<meta property="og:title" content="(.*?)"/>', html, re.DOTALL)
+        p['name'] = name[0].split('"')[0]
+        p['current_price'] = price[0][0]
+        # p['original_price'] = price[1][0]
         return p
 
     def get_sku(self, product_url):
