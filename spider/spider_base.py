@@ -12,6 +12,7 @@ class BaseSpider(object):
     def __init__(self):
         self.error = None
         self.ua = r'Mozilla/5.0 (Ubuntu; Linux x86_64) TeapotParser'
+        self.headers = {'User-Agent': self.ua}
 
     def run(self):
         return []
