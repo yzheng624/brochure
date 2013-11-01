@@ -96,7 +96,20 @@ app.controller('brochureController', ['$scope', 'productFactory', function ($sco
             'email': $scope.new.email
         };
         productFactory.addWatchlist(data).success(function (info) {
-            $scope.spinner.stop();
+            productFactory.getAll().success(function (products) {
+                productFactory.getWatchlist().success(function (watchlist) {
+                    for (var i = 0; i < products.length; i++) {
+                        for (var j = 0; j < watchlist.length; j++) {
+                            if (products[i].pk === watchlist[j].fields.product) {
+                                products[i].fields.desire_price = watchlist[j].fields.desire_price;
+                            }
+                        }
+                    }
+                });
+                $scope.spinner.stop();
+                $scope.products = products;
+                $scope.spinner.stop();
+            });
             $('#addLink').hide();
             $('#addLinkNext').hide();
             $('#addLinkDetail').show();
