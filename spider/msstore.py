@@ -2,6 +2,7 @@ from spider_base import BaseSpider
 import re
 import requests
 
+
 class MSStoreSpider(BaseSpider):
     def __init__(self):
         BaseSpider.__init__(self)
@@ -28,14 +29,6 @@ class MSStoreSpider(BaseSpider):
         p['current_price'] = price[0]
         # p['original_price'] = price[1][0]
         return p
-
-    def get_sku(self, product_url):
-        sku = int(re.findall(r'skuId=(\d+)&', product_url)[0])
-        return sku
-
-    def get_pid(self, product_url):
-        pid = int(re.findall(r'id=(\d+)&', product_url)[0])
-        return pid
 
 if __name__ == '__main__':
     u = 'http://www.microsoftstore.com/store/msusa/en_US/pdp/Acer-Aspire-A5600U-UR11-Touchscreen-All-in-One/productID.275592200'

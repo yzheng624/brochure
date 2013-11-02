@@ -2,7 +2,8 @@ from spider_base import BaseSpider
 import re
 import requests
 
-class HomwDepotSpider(BaseSpider):
+
+class HomeDepotSpider(BaseSpider):
     def __init__(self):
         BaseSpider.__init__(self)
 
@@ -21,23 +22,14 @@ class HomwDepotSpider(BaseSpider):
         p = {}
         r = requests.get(url, headers=self.headers)
         html = r.content
-        price = re.findall(r'<meta name="twitter:data1" content="\$([\d.,]+)"/>', html, re.DOTALL)
-        print price
-        name = re.findall(r'<meta name="twitter:title" content="(.*?)"/>', html, re.DOTALL)
-        p['name'] = name[0].split('"')[0]
+        price = re.findall(r'var CI_ItemPrice=\'([\d.,]+)\';', html, re.DOTALL)
+        name = re.findall(r'var CI_ItemName=\'(.*?)\';', html, re.DOTALL)
+        p['name'] = name[0]
         p['current_price'] = price[0]
         # p['original_price'] = price[1][0]
         return p
 
-    def get_sku(self, product_url):
-        sku = int(re.findall(r'skuId=(\d+)&', product_url)[0])
-        return sku
-
-    def get_pid(self, product_url):
-        pid = int(re.findall(r'id=(\d+)&', product_url)[0])
-        return pid
-
 if __name__ == '__main__':
-    u = 'http://www.microsoftstore.com/store/msusa/en_US/pdp/Acer-Aspire-A5600U-UR11-Touchscreen-All-in-One/productID.275592200'
-    m = HomwDepotSpider()
+    u = 'http://www.homedepot.com/p/EcoSmart-14-Watt-75W-BR30-Soft-White-2700K-LED-Flood-Light-Bulb-4-Pack-ECS-BR30-W27-120-4PK/204627118?N=arcdZ6'
+    m = HomeDepotSpider()
     print m.query(u)

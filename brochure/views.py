@@ -3,6 +3,7 @@ from spider.bestbuy import BestBuySpider
 from spider.msstore import MSStoreSpider
 from spider.radioshack import RadioShackSpider
 from spider.staples import StaplesSpider
+from spider.homedepot import HomeDepotSpider
 import json
 from django.views.decorators.csrf import csrf_exempt
 from brochure.models import *
@@ -30,6 +31,9 @@ def query(request):
         elif store_name == 'staples':
             staple = StaplesSpider()
             product = staple.query(url)
+        elif store_name == 'home':
+            home = HomeDepotSpider()
+            product = home.query(url)
         return HttpResponse(json.dumps(product), content_type="application/json")
 
 @csrf_exempt

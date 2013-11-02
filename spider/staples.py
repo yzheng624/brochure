@@ -40,14 +40,6 @@ class StaplesSpider(BaseSpider):
         # p['original_price'] = price[1][0]
         return p
 
-    def get_sku(self, product_url):
-        sku = int(re.findall(r'skuId=(\d+)&', product_url)[0])
-        return sku
-
-    def get_pid(self, product_url):
-        pid = int(re.findall(r'id=(\d+)&', product_url)[0])
-        return pid
-
 if __name__ == '__main__':
     u = 'http://www.staples.com/Toshiba-C855-S5350-156-Laptop/product_984635'
     m = StaplesSpider()

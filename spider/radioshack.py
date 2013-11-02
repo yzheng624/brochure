@@ -2,6 +2,7 @@ from spider_base import BaseSpider
 import re
 import requests
 
+
 class RadioShackSpider(BaseSpider):
     def __init__(self):
         BaseSpider.__init__(self)
