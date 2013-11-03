@@ -2,6 +2,7 @@ from spider_base import BaseSpider
 import re
 import requests
 from brochure.models import *
+from django.core.mail import send_mail
 
 
 class BestBuySpider(BaseSpider):
@@ -15,9 +16,15 @@ class BestBuySpider(BaseSpider):
             print product.name
             print 'Before:' + str(product.current_price)
             p = self.query(product.url)
-            if product.current_price != float(p['current_price']):
+            if str(product.current_price) != str(p['current_price']):
+                prev_price = product.current_price
                 product.current_price = float(p['current_price'])
                 product.save()
+                watchlist = Watchlist.objects.filter(product__pk=product.pk)
+                to_list = []
+                for w in watchlist:
+                    to_list.append(w.email)
+                send_mail(product.name + '\'s price been updated', 'From ' + str(prev_price) + ' to ' + str(product.current_price), 'brochuredev@126.com', to_list, fail_silently=False)
                 print 'After:' + str(product.current_price)
 
     def query(self, url):

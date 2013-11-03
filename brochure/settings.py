@@ -169,3 +169,13 @@ LOGGING = {
         },
     }
 }
+
+# email settings
+EMAIL_USE_TLS = False
+EMAIL_HOST = 'smtp.126.com'
+EMAIL_HOST_USER = 'brochuredev@126.com'
+EMAIL_HOST_PASSWORD = 'yanzheng'
+EMAIL_PORT = 25
+DEFAULT_FROM_EMAIL = 'brochuredev@126.com'
+SERVER_EMAIL = 'brochuredev@126.com'
+
