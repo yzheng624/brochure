@@ -8,6 +8,8 @@ import json
 from django.views.decorators.csrf import csrf_exempt
 from brochure.models import *
 from django.core import serializers
+from django.core import management
+
 
 def home(request):
     return render_to_response('home.html', locals())
@@ -67,3 +69,8 @@ def add_item(request):
         w = Watchlist(email=email, product=p, desire_price=desire_price)
         w.save()
         return HttpResponse(json.dumps({'info': 0}), content_type="application/json")
+
+
+def sync(request):
+    management.call_command('runcrons')
+    return HttpResponse(json.dumps({'info': 0}), content_type="application/json")

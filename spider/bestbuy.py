@@ -10,13 +10,13 @@ class BestBuySpider(BaseSpider):
         self.api_key = '5q7nvwnwfm5bc9xk7qbgb3gb'
 
     def run(self):
-        products = Product.objects.all()
+        products = Product.objects.filter(website='bestbuy')
         for product in products:
             print product.name
             print 'Before:' + str(product.current_price)
             p = self.query(product.url)
             if product.current_price != float(p['current_price']):
-                product.current_price = p['current_price']
+                product.current_price = float(p['current_price'])
                 product.save()
                 print 'After:' + str(product.current_price)
 

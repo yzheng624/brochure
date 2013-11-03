@@ -13,6 +13,7 @@ urlpatterns = patterns('',
     url(r'^get_items/$', 'brochure.views.get_items'),
     url(r'^add_item/$', 'brochure.views.add_item'),
     url(r'^get_watchlist/$', 'brochure.views.get_watchlist'),
+    url(r'^sync/$', 'brochure.views.sync'),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),

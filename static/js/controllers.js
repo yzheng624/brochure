@@ -24,6 +24,10 @@ app.factory('productFactory', ['$http', function ($http) {
         return $http.post(urlBase + 'get_watchlist/', data);
     };
 
+    productFactory.dummy = function () {
+        return $http.get(urlBase + 'sync/');
+    }
+
     return productFactory;
 }]);
 
@@ -45,6 +49,7 @@ app.controller('brochureController', ['$scope', 'productFactory', function ($sco
             top : $(window).height()/2.5, // Manual positioning in viewport
             left : "auto"
     };
+    productFactory.dummy();
     $scope.itemClicked = function (store_name) {
         $scope.store_name = store_name;
         $('.list-group-item').removeClass('active');
