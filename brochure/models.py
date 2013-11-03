@@ -9,6 +9,7 @@ class Product(models.Model):
     error = models.BooleanField()
     last_update = models.DateTimeField(auto_now=True)
     website = models.CharField(max_length=100)
+    uuid = models.CharField(max_length=100)
 
     def __unicode__(self):
         return self.name

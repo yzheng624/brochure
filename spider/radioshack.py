@@ -23,12 +23,16 @@ class RadioShackSpider(BaseSpider):
         r = requests.get(url, headers=self.headers)
         html = r.content
         price = re.findall(r'<span class="price">&#036;([\d.,]+)</span>', html, re.DOTALL)
-        print price
         name = re.findall(r'<strong>(.*?)</strong>', html, re.DOTALL)
         p['name'] = name[0].split('"')[0]
         p['current_price'] = price[0]
+        p['uuid'] = self.get_uuid(url)
         # p['original_price'] = price[1][0]
         return p
+
+    @staticmethod
+    def get_uuid(url):
+        return re.findall(r'productId=([\d]+)', url)[0]
 
 if __name__ == '__main__':
     u = 'http://www.radioshack.com/product/index.jsp?productId=13097267&znt_campaign=Category_CMS&znt_source=CAT&znt_medium=RSCOM&znt_content=CT2056569'

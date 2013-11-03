@@ -30,15 +30,17 @@ class StaplesSpider(BaseSpider):
         p = {}
         r = self.bot.get(url, headers=self.headers)
         html = r.content
-        f = open('s.html', 'w')
-        f.write(html)
         price = re.findall(r'<span class="finalPrice">\$([\d.,]+).</span>', html, re.DOTALL)
-        print price
         name = re.findall(r'<title>(.*?)</title>', html, re.DOTALL)
         p['name'] = name[0].split('|')[0]
         p['current_price'] = price[0]
+        p['uuid'] = self.get_uuid(url)
         # p['original_price'] = price[1][0]
         return p
+
+    @staticmethod
+    def get_uuid(url):
+        return url.split('_')[-1]
 
 if __name__ == '__main__':
     u = 'http://www.staples.com/Toshiba-C855-S5350-156-Laptop/product_984635'

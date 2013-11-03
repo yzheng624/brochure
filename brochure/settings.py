@@ -131,7 +131,7 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'brochure',
-    'django_cron'
+    'django_cron',
 )
 
 # for django cron

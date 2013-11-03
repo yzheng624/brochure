@@ -103,7 +103,8 @@ app.controller('brochureController', ['$scope', 'productFactory', function ($sco
             'current_price': $scope.new.current_price,
             'original_price': $scope.new.original_price,
             'name': $scope.new.name,
-            'email': $scope.new.email
+            'email': $scope.new.email,
+            'uuid': $scope.new.uuid
         };
         productFactory.addItem(data, $scope.store_name).success(function (info) {
             productFactory.getAll($scope.store_name).success(function (products) {

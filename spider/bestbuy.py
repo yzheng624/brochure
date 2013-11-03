@@ -1,7 +1,10 @@
 from spider_base import BaseSpider
 import re
 import requests
-from brochure.models import *
+try:
+    from brochure.models import *
+except:
+    pass
 from django.core.mail import send_mail
 
 
@@ -35,16 +38,14 @@ class BestBuySpider(BaseSpider):
         name = re.findall(r'<meta property="og:title" content="(.*?)"/>', html, re.DOTALL)
         p['name'] = name[0].split('"')[0]
         p['current_price'] = price[0][0]
+        p['uuid'] = self.get_uuid(url)
         # p['original_price'] = price[1][0]
         return p
 
-    def get_sku(self, product_url):
+    @staticmethod
+    def get_uuid(product_url):
         sku = int(re.findall(r'skuId=(\d+)&', product_url)[0])
         return sku
-
-    def get_pid(self, product_url):
-        pid = int(re.findall(r'id=(\d+)&', product_url)[0])
-        return pid
 
 if __name__ == '__main__':
     u = 'http://www.bestbuy.com/site/duke-nukem-forever-windows/2435079.p?id=1218328201673&skuId=2435079&strId=1436&strClr=true&ld=39.42216&lg=-76.78031&rd=25'

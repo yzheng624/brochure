@@ -27,8 +27,13 @@ class MSStoreSpider(BaseSpider):
         name = re.findall(r'<meta name="twitter:title" content="(.*?)"/>', html, re.DOTALL)
         p['name'] = name[0].split('"')[0]
         p['current_price'] = price[0]
+        p['uuid'] = self.get_uuid(url)
         # p['original_price'] = price[1][0]
         return p
+
+    @staticmethod
+    def get_uuid(url):
+        return url.split('.')[-1]
 
 if __name__ == '__main__':
     u = 'http://www.microsoftstore.com/store/msusa/en_US/pdp/Acer-Aspire-A5600U-UR11-Touchscreen-All-in-One/productID.275592200'

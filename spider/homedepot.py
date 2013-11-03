@@ -26,8 +26,14 @@ class HomeDepotSpider(BaseSpider):
         name = re.findall(r'var CI_ItemName=\'(.*?)\';', html, re.DOTALL)
         p['name'] = name[0]
         p['current_price'] = price[0]
+        p['uuid'] = self.get_uuid(html)
         # p['original_price'] = price[1][0]
         return p
+
+    @staticmethod
+    def get_uuid(html):
+        q = re.findall(r'Internet # ([\d]+)</h2>', html)
+        return q[0]
 
 if __name__ == '__main__':
     u = 'http://www.homedepot.com/p/EcoSmart-14-Watt-75W-BR30-Soft-White-2700K-LED-Flood-Light-Bulb-4-Pack-ECS-BR30-W27-120-4PK/204627118?N=arcdZ6'
