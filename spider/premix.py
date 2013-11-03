@@ -271,8 +271,8 @@ class RemixQuery(object):
                 if m.get('X-Mashery-Error-Code', None):
                     raise IOError("Error returned from server after %s attempt(s): %s" % (tries, m['X-Mashery-Error-Code']))
                 content_type = m.get('Content-Type', None)
-                if not content_type or ('application/x-javascript' not in content_type):
-                    raise IOError("Got an incorrect response type (%s) after %s attempt(s)" % (content_type, tries))
+                # if not content_type or ('application/x-javascript' not in content_type):
+                #     raise IOError("Got an incorrect response type (%s) after %s attempt(s)" % (content_type, tries))
                 raw_data = f.read()
                 data = json.loads(raw_data)
                 break

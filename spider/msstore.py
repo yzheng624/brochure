@@ -23,12 +23,17 @@ class MSStoreSpider(BaseSpider):
         r = requests.get(url, headers=self.headers)
         html = r.content
         price = re.findall(r'<meta name="twitter:data1" content="\$([\d.,]+)"/>', html, re.DOTALL)
-        print price
         name = re.findall(r'<meta name="twitter:title" content="(.*?)"/>', html, re.DOTALL)
+        original = re.findall(r'strikethrough">\$([\d,.]+)</span>', html)
         p['name'] = name[0].split('"')[0]
         p['current_price'] = price[0]
         p['uuid'] = self.get_uuid(url)
-        # p['original_price'] = price[1][0]
+        try:
+            p['original_price'] = original[0].replace(',', '')
+        except:
+            p['original_price'] = 0.0
+        type = re.findall(r'busgrp : \[\'([\w]+)\'\]', html)
+        p['type'] = type[0]
         return p
 
     @staticmethod

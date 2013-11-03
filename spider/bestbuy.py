@@ -6,6 +6,8 @@ try:
 except:
     pass
 from django.core.mail import send_mail
+from premix import ProductQuery
+import json
 
 
 class BestBuySpider(BaseSpider):
@@ -26,8 +28,19 @@ class BestBuySpider(BaseSpider):
                 watchlist = Watchlist.objects.filter(product__pk=product.pk)
                 to_list = []
                 for w in watchlist:
-                    to_list.append(w.email)
-                send_mail(product.name + '\'s price been updated', 'From ' + str(prev_price) + ' to ' + str(product.current_price), 'brochuredev@126.com', to_list, fail_silently=False)
+                    if float(w.desire_price) >= float(product.current_price):
+                        to_list.append(w.email)
+                content = 'Type: ' + product.type + '\n'
+                content += 'Item: ' + product.name + '\n'
+                content += 'Sku: ' + product.uuid + '\n'
+                content += 'Current Price: ' + str(product.current_price) + '\n'
+                content += 'Reason: Price Drop\n'
+                content += 'Item Link: ' + product.url + '\n'
+                content += 'Amazon Link: ' \
+                           + 'http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=' \
+                           + product.name
+                send_mail(product.name + '\'s price been updated', content,
+                          'brochuredev@126.com', to_list, fail_silently=False)
                 print 'After:' + str(product.current_price)
 
     def query(self, url):
@@ -36,16 +49,31 @@ class BestBuySpider(BaseSpider):
         html = r.content
         price = re.findall(r'price">(?:\$|<span class="denominator">\$</span>)([\d.,]+)(</span>|</div>)', html, re.DOTALL)
         name = re.findall(r'<meta property="og:title" content="(.*?)"/>', html, re.DOTALL)
-        p['name'] = name[0].split('"')[0]
+
         p['current_price'] = price[0][0]
         p['uuid'] = self.get_uuid(url)
-        # p['original_price'] = price[1][0]
+        product_query = ProductQuery.sku(int(p['uuid'])).show_all()
+        api_url = product_query.url(self.api_key,  pid=int(self.get_pid(url)))
+        r = requests.get(api_url, headers=self.headers)
+        j = json.loads(r.content)
+
+        p['name'] = j.get('name', None)
+        p['type'] = j.get('type', None)
+        p['original_price'] =  j.get('regularPrice', None)
         return p
 
     @staticmethod
-    def get_uuid(product_url):
-        sku = int(re.findall(r'skuId=(\d+)&', product_url)[0])
+    def get_uuid(url):
+        sku = int(re.findall(r'skuId=(\d+)&', url)[0])
         return sku
+
+    @staticmethod
+    def get_pid(url):
+        return re.findall(r'id=([\d]+)', url)[0]
+
+    @staticmethod
+    def get_type(html):
+        return
 
 if __name__ == '__main__':
     u = 'http://www.bestbuy.com/site/duke-nukem-forever-windows/2435079.p?id=1218328201673&skuId=2435079&strId=1436&strClr=true&ld=39.42216&lg=-76.78031&rd=25'

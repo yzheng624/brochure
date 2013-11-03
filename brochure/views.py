@@ -64,8 +64,9 @@ def add_item(request):
         desire_price = j.get('desire_price', None).replace(',', '')
         email = j.get('email', None)
         uuid = j.get('uuid', None)
-        p = Product(name=name, url=url, current_price=sale_price, original_price=0.0,
-                    error=False, website=store_name, uuid=uuid)
+        original_price = j.get('original_price', None)
+        p = Product(name=name, url=url, current_price=sale_price, original_price=original_price,
+                    error=False, website=store_name, uuid=uuid, type=type)
         p.save()
         w = Watchlist(email=email, product=p, desire_price=desire_price)
         w.save()
