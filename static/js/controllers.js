@@ -50,6 +50,8 @@ app.controller('brochureController', ['$scope', 'productFactory', function ($sco
             left : "auto"
     };
     productFactory.dummy();
+    $scope.predicate = 'fields.current_price';
+    $scope.reverse = false;
     $scope.itemClicked = function (store_name) {
         $('#addLink').hide();
         $('#addLinkNext').hide();
@@ -124,6 +126,7 @@ app.controller('brochureController', ['$scope', 'productFactory', function ($sco
                 $scope.products = products;
                 $scope.spinner.stop();
             });
+
             $('#addLink').hide();
             $('#addLinkNext').hide();
             $('#addLinkDetail').show();
@@ -131,5 +134,8 @@ app.controller('brochureController', ['$scope', 'productFactory', function ($sco
             $('#hr').show();
             $('#table').show();
         });
+    };
+    $scope.deleteItems = function () {
+
     };
 }]);

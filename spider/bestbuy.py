@@ -29,7 +29,7 @@ class BestBuySpider(BaseSpider):
                 to_list = []
                 for w in watchlist:
                     if float(w.desire_price) >= float(product.current_price):
-                        to_list.append(w.email)
+                        to_list.append(w.user.email)
                 content = 'Type: ' + product.type + '\n'
                 content += 'Item: ' + product.name + '\n'
                 content += 'Sku: ' + product.uuid + '\n'

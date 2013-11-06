@@ -78,15 +78,13 @@ def query(request):
 @csrf_exempt
 def get_items(request):
     store_name = json.loads(request.body).get('store_name', None)
-    print store_name
-    products = Product.objects.filter(website=store_name)
+    products = Product.objects.filter(website=store_name).all()
     return HttpResponse(serializers.serialize('json', products), content_type="application/json")
 
 @csrf_exempt
 def get_watchlist(request):
     store_name = json.loads(request.body).get('store_name', None)
-    print store_name
-    watchlist = Watchlist.objects.filter(product__website=store_name)
+    watchlist = Watchlist.objects.filter(product__website=store_name, user=request.user)
     return HttpResponse(serializers.serialize('json', watchlist), content_type="application/json")
 
 @csrf_exempt
@@ -95,7 +93,7 @@ def add_item(request):
         store_name = json.loads(request.body).get('store_name', None)
         j = json.loads(request.body)
         url = j.get('url', None)
-        name = j.get('name', None).decode('string-escape')
+        name = j.get('name', None)
         # original_price = j.get('original_price', None).replace(',', '')
         sale_price = j.get('current_price', None).replace(',', '')
         desire_price = j.get('desire_price', None).replace(',', '')
@@ -105,7 +103,7 @@ def add_item(request):
         p = Product(name=name, url=url, current_price=sale_price, original_price=original_price,
                     error=False, website=store_name, uuid=uuid, type=type)
         p.save()
-        w = Watchlist(email=email, product=p, desire_price=desire_price)
+        w = Watchlist(user=request.user, product=p, desire_price=desire_price)
         w.save()
         return HttpResponse(json.dumps({'info': 0}), content_type="application/json")
 
