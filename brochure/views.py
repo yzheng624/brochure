@@ -13,6 +13,7 @@ from django.shortcuts import redirect
 from django.core.context_processors import csrf
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
+from django.contrib.auth import logout
 
 
 def home(request):
@@ -50,6 +51,10 @@ def signup(request):
         c = {}
         c.update(csrf(request))
         return render_to_response('signup.html', c)
+
+def signout(request):
+    logout(request)
+    return redirect('/')
 
 @csrf_exempt
 def query(request):

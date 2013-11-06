@@ -101,6 +101,9 @@ app.controller('brochureController', ['$scope', 'productFactory', function ($sco
             $scope.new.queryUrl = url;
             $('#addLinkNext').hide();
             $('#addLinkDetail').show();
+        }).error(function () {
+            $scope.spinner.stop();
+            $('#info').modal('show');
         });
     };
     $scope.submitProduct = function () {
@@ -149,5 +152,17 @@ app.controller('brochureController', ['$scope', 'productFactory', function ($sco
         productFactory.deleteItems($scope.selected).success(function (info) {
             $scope.itemClicked($scope.store_name);
         });
+    };
+    $scope.selectAll = function () {
+        console.log($('.selectAll').is(':checked'));
+        if ($('.selectAll').is(':checked')) {
+            for (var i = 0; i < $scope.products.length; i++) {
+                $scope.selected[$scope.products[i].pk] = true;
+            }
+        } else {
+            for (var i = 0; i < $scope.products.length; i++) {
+                $scope.selected[$scope.products[i].pk] = false;
+            }
+        }
     };
 }]);

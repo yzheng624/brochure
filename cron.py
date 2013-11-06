@@ -6,7 +6,7 @@ from django.core import management
 
 
 class UpdateCronJob(CronJobBase):
-    RUN_EVERY_MINS = 1  # every 1 min
+    RUN_EVERY_MINS = 10  # every 10 min
 
     schedule = Schedule(run_every_mins=RUN_EVERY_MINS)
     code = 'brochure.update_cron_job'    # a unique code

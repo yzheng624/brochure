@@ -17,6 +17,7 @@ urlpatterns = patterns('',
     url(r'^signin/$', 'brochure.views.signin'),
     url(r'^signup/$', 'brochure.views.signup'),
     url(r'^delete_items/$', 'brochure.views.delete_items'),
+    url(r'signout/$', 'brochure.views.signout'),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
