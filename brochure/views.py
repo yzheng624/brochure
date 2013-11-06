@@ -78,7 +78,7 @@ def query(request):
 @csrf_exempt
 def get_items(request):
     store_name = json.loads(request.body).get('store_name', None)
-    products = Product.objects.filter(website=store_name).all()
+    products = Product.objects.filter(website=store_name, watchlist__user=request.user).all()
     return HttpResponse(serializers.serialize('json', products), content_type="application/json")
 
 @csrf_exempt
@@ -107,6 +107,15 @@ def add_item(request):
         w.save()
         return HttpResponse(json.dumps({'info': 0}), content_type="application/json")
 
+@csrf_exempt
+def delete_items(request):
+    if request.method == 'POST':
+        dic = json.loads(request.body)
+        for key in dic:
+            if dic[key] == True:
+                w = Watchlist.objects.filter(product__pk=key)
+                w.delete()
+    return HttpResponse(json.dumps({'info': 0}), content_type="application/json")
 
 def sync(request):
     management.call_command('runcrons')

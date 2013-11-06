@@ -24,6 +24,10 @@ app.factory('productFactory', ['$http', function ($http) {
         return $http.post(urlBase + 'get_watchlist/', data);
     };
 
+    productFactory.deleteItems = function (selected) {
+        return $http.post(urlBase + 'delete_items/', selected);
+    };
+
     productFactory.dummy = function () {
         return $http.get(urlBase + 'sync/');
     }
@@ -135,7 +139,15 @@ app.controller('brochureController', ['$scope', 'productFactory', function ($sco
             $('#table').show();
         });
     };
+    $scope.selected = {};
     $scope.deleteItems = function () {
-
+        for (pk in $scope.selected) {
+            console.log(pk);
+            console.log($scope.selected[pk]);
+        }
+        console.log($scope.selected);
+        productFactory.deleteItems($scope.selected).success(function (info) {
+            $scope.itemClicked($scope.store_name);
+        });
     };
 }]);
