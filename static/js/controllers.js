@@ -51,6 +51,9 @@ app.controller('brochureController', ['$scope', 'productFactory', function ($sco
     };
     productFactory.dummy();
     $scope.itemClicked = function (store_name) {
+        $('#addLink').hide();
+        $('#addLinkNext').hide();
+        $('#addLinkDetail').hide();
         $scope.store_name = store_name;
         $('.list-group-item').removeClass('active');
         var target = $("body")[0];

@@ -9,10 +9,47 @@ from django.views.decorators.csrf import csrf_exempt
 from brochure.models import *
 from django.core import serializers
 from django.core import management
+from django.shortcuts import redirect
+from django.core.context_processors import csrf
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
 
 
 def home(request):
-    return render_to_response('home.html', locals())
+    if request.user.is_authenticated():
+        return render_to_response('home.html', locals())
+    else:
+        return redirect('/signin/')
+
+def signin(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('/')
+        else:
+            pass
+    else:
+        c = {}
+        c.update(csrf(request))
+        return render_to_response('signin.html', c)
+
+def signup(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        email = request.POST['email']
+        password = request.POST['password']
+        user = User.objects.create_user(username, email, password)
+        user.save()
+        user = authenticate(username=username, password=password)
+        login(request, user)
+        return redirect('/')
+    else:
+        c = {}
+        c.update(csrf(request))
+        return render_to_response('signup.html', c)
 
 @csrf_exempt
 def query(request):
