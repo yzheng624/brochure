@@ -47,20 +47,40 @@ class BestBuySpider(BaseSpider):
         p = {}
         r = requests.get(url, headers=self.headers)
         html = r.content
-        price = re.findall(r'price">(?:\$|<span class="denominator">\$</span>)([\d.,]+)(</span>|</div>)', html, re.DOTALL)
-        name = re.findall(r'<meta property="og:title" content="(.*?)"/>', html, re.DOTALL)
+        try:
+            price = re.findall(r'price">(?:\$|<span class="denominator">\$</span>)([\d.,]+)(</span>|</div>)', html, re.DOTALL)
+            name = re.findall(r'<meta property="og:title" content="(.*?)"/>', html, re.DOTALL)
+            assert len(price) > 0
 
-        p['current_price'] = price[0][0]
-        p['uuid'] = self.get_uuid(url)
-        product_query = ProductQuery.sku(int(p['uuid'])).show_all()
-        api_url = product_query.url(self.api_key,  pid=int(self.get_pid(url)))
-        r = requests.get(api_url, headers=self.headers)
-        j = json.loads(r.content)
+            p['current_price'] = price[0][0]
+            product_query = ProductQuery.sku(int(p['uuid'])).show_all()
+            api_url = product_query.url(self.api_key,  pid=int(self.get_pid(url)))
+            print api_url
+            r = requests.get(api_url, headers=self.headers)
+            j = json.loads(r.content)
 
-        p['name'] = j.get('name', None)
-        p['type'] = j.get('type', None)
-        p['original_price'] =  j.get('regularPrice', None)
-        return p
+            p['original_price'] =  j.get('regularPrice', None)
+            p = {
+                'name': j.get('name', None),
+                'type': j.get('type', None),
+                'current_price': j.get('salePrice', None),
+                'original_price': j.get('regularPrice', None),
+                'uuid':  j.get('sku', None),
+            }
+        except:
+            product_query = ProductQuery.sku(self.get_uuid(url)).show_all()
+            api_url = product_query.url(self.api_key,  pid=int(self.get_pid(url)))
+            print api_url
+            r = requests.get(api_url, headers=self.headers)
+            j = json.loads(r.content)
+            p = {
+                'name': j.get('name', None),
+                'type': j.get('type', None),
+                'current_price': j.get('salePrice', None),
+                'original_price': j.get('regularPrice', None),
+                'uuid':  j.get('sku', None),
+            }
+        return p, j
 
     @staticmethod
     def get_uuid(url):

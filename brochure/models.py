@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from jsonfield import JSONField
 
 
 class Product(models.Model):
@@ -12,6 +13,7 @@ class Product(models.Model):
     website = models.CharField(max_length=100)
     uuid = models.CharField(max_length=100)
     type = models.CharField(max_length=200)
+    json = JSONField()
 
     def __unicode__(self):
         return self.name

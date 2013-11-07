@@ -9,6 +9,7 @@
 
     <link href="/static/css/bootstrap.css" rel="stylesheet">
     <link href="/static/css/navbar.css" rel="stylesheet">
+    <link href="/static/css/xeditable.css" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -76,9 +77,6 @@
                         <button type="button" class="btn btn-primary" ng-click="addLink()">Add</button>
                     </div>
                     <div class="form-group">
-                        <button type="button" class="btn btn-warning" ng-click="">Modify</button>
-                    </div>
-                    <div class="form-group">
                         <button type="button" class="btn btn-danger" ng-click="deleteItems()">Delete</button>
                     </div>
                     <div class="form-group">
@@ -99,7 +97,7 @@
                 <th><a href="" ng-click="predicate = 'fields.current_price'; reverse=!reverse">Current Price</a></th>
                 <th><a href="" ng-click="predicate = 'fields.original_price'; reverse=!reverse">Original Price</a></th>
                 <th><a href="" ng-click="predicate = 'fields.desire_price'; reverse=!reverse">Desired Price</a></th>
-                <th>Amazon Search</th>
+                <th>Amazon</th>
                 <th><a href="" ng-click="predicate = 'fields.status'; reverse=!reverse">Status</a></th>
               </tr>
             </thead>
@@ -111,8 +109,10 @@
                 <td><a href="{{ product.fields.url }}" ng-bind-html="product.fields.name" target="_blank"></a></td>
                 <td ng-bind-html="product.fields.current_price"></td>
                 <td ng-bind-html="product.fields.original_price"></td>
-                <td ng-bind-html="product.fields.desire_price"></td>
-                <td><a href="http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords={{ product.fields.name }}" class="btn btn-default" target="_blank">Amazon</a></td>
+                <td>
+                    <a href="#" editable-text="product.fields.desire_price" onbeforesave="updatePrice(product.pk, $data)">{{ product.fields.desire_price || "empty" }}</a>
+                </td>
+                <td><a href="http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords={{ product.fields.name }}" class="btn btn-default" target="_blank">Search</a></td>
                 <td>Ok</td>
                 {% endverbatim %}
               </tr>
@@ -158,22 +158,59 @@
               </div>
             </form>
           </div>
-
+          {% endverbatim %}
             <!-- Modal -->
             <div class="modal fade" id="settings" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
               <div class="modal-dialog">
                 <div class="modal-content">
                   <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+                    <h3 class="modal-title" id="myModalLabel">Settings</h3>
                   </div>
+                  <form class="form-horizontal" role="form" action="/save_settings/" method="post">
                   <div class="modal-body">
-                    ...
+                      <h4>Account</h4>
+                  <hr />
+                    <div class="form-group">
+                      <label for="inputEmail3" class="col-sm-2 control-label">Email</label>
+                      <div class="col-sm-10">
+                        <input type="email" class="form-control" name="email" id="inputEmail3" placeholder="Email" value="{{ request.user.email }}">
+                      </div>
+                    </div>
+                    <h4>Per Page</h4>
+                    <hr />
+                    <div class="modal-body">
+                      <div class="form-group">
+                      <label for="inputEmail3" class="col-sm-2 control-label">Email</label>
+                        <div class="col-sm-10">
+                          <input type="email" class="form-control" name="email" id="inputEmail3" placeholder="Email" value="">
+                        </div>
+                      </div>
+                    </div>
+                    <h4>Filter Condition</h4>
+                    <hr />
+                    <div class="modal-body">
+                      <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-2 control-label">Amount</label>
+                          <div class="col-sm-10">
+                            <input type="email" class="form-control" name="email" id="inputEmail3" placeholder="20" value="">
+                      </div>
+                    </div>
+                    </div>
+                  <div class="modal-body">
+                      <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">Percent</label>
+                    <div class="col-sm-10">
+                      <input type="email" class="form-control" name="email" id="inputEmail3" placeholder="0.8" value="">
+                    </div>
+                  </div>
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
                   </div>
+                  </div>
+                  </form>
                 </div><!-- /.modal-content -->
               </div><!-- /.modal-dialog -->
             </div><!-- /.modal -->
@@ -187,7 +224,7 @@
                     <h4 class="modal-title" id="myModalLabel">Sorry but ...</h4>
                   </div>
                   <div class="modal-body">
-                    Something is wrong, we can not finish your request.
+                    The product has been sold out, or your url is invalid, we can not finish your request.
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -195,7 +232,6 @@
                 </div><!-- /.modal-content -->
               </div><!-- /.modal-dialog -->
             </div><!-- /.modal -->
-          {% endverbatim %}
         </div><!--/span-->
       </div><!--/row-->
     </div><!--/.container-->
@@ -214,6 +250,7 @@
     <script src="/static/js/angular-sanitize.min.js"></script>
     <script src="/static/js/angular-bootstrap.min.js"></script>
     <script src="/static/js/angular-bootstrap-prettify.min.js"></script>
+    <script src="/static/js/xeditable.js"></script>
     <script src="/static/js/spin.min.js"></script>
     <script src="/static/js/controllers.js"></script>
   </body>

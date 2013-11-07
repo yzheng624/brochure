@@ -1,4 +1,8 @@
-var app = angular.module('brochureApp', ['ngResource', 'ngSanitize']);
+var app = angular.module('brochureApp', ['ngResource', 'ngSanitize', 'xeditable']);
+
+app.run(function(editableOptions) {
+  editableOptions.theme = 'bs3'; // bootstrap3 theme. Can be also 'bs2', 'default'
+});
 
 app.factory('productFactory', ['$http', function ($http) {
     var urlBase = '/';
@@ -34,6 +38,10 @@ app.factory('productFactory', ['$http', function ($http) {
 
     productFactory.setMark = function (data) {
         return $http.post(urlBase + 'set_mark/', data);
+    };
+
+    productFactory.updatePrice = function (data) {
+        return $http.post(urlBase + 'update_price/', data);
     };
 
     return productFactory;
@@ -179,6 +187,17 @@ app.controller('brochureController', ['$scope', 'productFactory', function ($sco
             'pk': pk,
         }
         productFactory.setMark(data).success(function (info) {
+            $scope.spinner.stop();
+        });
+    };
+    $scope.updatePrice = function (pk, desire_price) {
+        var target = $("body")[0];
+        $scope.spinner = Spinner(opts).spin(target);
+        data = {
+            'pk': pk,
+            'desire_price': desire_price
+        };
+        productFactory.updatePrice(data).success(function (info) {
             $scope.spinner.stop();
         });
     }

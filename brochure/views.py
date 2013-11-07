@@ -65,7 +65,7 @@ def query(request):
         product = None
         if store_name == 'bestbuy':
             bb = BestBuySpider()
-            product = bb.query(url)
+            product, _ = bb.query(url)
         elif store_name == 'msstore':
             mss = MSStoreSpider()
             product = mss.query(url)
@@ -99,14 +99,12 @@ def add_item(request):
         j = json.loads(request.body)
         url = j.get('url', None)
         name = j.get('name', None)
-        # original_price = j.get('original_price', None).replace(',', '')
-        sale_price = j.get('current_price', None).replace(',', '')
+        sale_price = str(j.get('current_price', None)).replace(',', '')
         desire_price = j.get('desire_price', None).replace(',', '')
-        email = j.get('email', None)
         uuid = j.get('uuid', None)
         original_price = j.get('original_price', None)
         p = Product(name=name, url=url, current_price=sale_price, original_price=original_price,
-                    error=False, website=store_name, uuid=uuid, type=type)
+                    error=False, website=store_name, uuid=uuid, type=type, json={})
         p.save()
         w = Watchlist(user=request.user, product=p, desire_price=desire_price)
         w.save()
@@ -131,6 +129,24 @@ def set_mark(request):
         w.mark = (w.mark == False)
         w.save()
     return HttpResponse(json.dumps({'info': 0}), content_type="application/json")
+
+@csrf_exempt
+def save_settings(request):
+    if request.method == 'POST':
+        request.user.email = request.POST['email']
+        request.user.save()
+        return redirect('/')
+
+@csrf_exempt
+def update_price(request):
+    if request.method == 'POST':
+        j = json.loads(request.body)
+        pk = j.get('pk', None)
+        desire_price = j.get('desire_price', None)
+        w = Watchlist.objects.filter(user=request.user, product__pk=pk).get()
+        w.desire_price = desire_price
+        w.save()
+        return HttpResponse(json.dumps({'info': 0}), content_type="application/json")
 
 def sync(request):
     management.call_command('runcrons')
