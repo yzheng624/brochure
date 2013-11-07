@@ -71,9 +71,19 @@
           <div id="menubar" style="display: none;">
             <div class="container">
               <div class="row">
-                <button type="button" class="btn btn-primary" ng-click="addLink()">Add Link</button>
-                <button type="button" class="btn btn-warning" ng-click="">Modify Selected Link</button>
-                <button type="button" class="btn btn-danger" ng-click="deleteItems()">Delete Selected Link</button>
+                <form class="form-inline" role="form">
+                    <div class="form-group">
+                        <button type="button" class="btn btn-primary" ng-click="addLink()">Add</button>
+                    </div>
+                    <div class="form-group">
+                        <button type="button" class="btn btn-warning" ng-click="">Modify</button>
+                    </div>
+                    <div class="form-group">
+                        <button type="button" class="btn btn-danger" ng-click="deleteItems()">Delete</button>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search" ng-model="searchText" />
+                    </div>
               </div>
             </div>
           </div>
@@ -94,10 +104,10 @@
               </tr>
             </thead>
             <tbody>
-              <tr data-ng-repeat="product in products | orderBy:predicate:reverse">
+              <tr data-ng-repeat="product in products | orderBy:predicate:reverse | filter:searchText">
                 {% verbatim %}
                 <td><input type="checkbox" ng-model="selected[product.pk]"/></td>
-                <td><input type="checkbox" /></td>
+                <td><input type="checkbox" ng-model="product.fields.mark" ng-click="markClicked(product.pk)"/></td>
                 <td><a href="{{ product.fields.url }}" ng-bind-html="product.fields.name" target="_blank"></a></td>
                 <td ng-bind-html="product.fields.current_price"></td>
                 <td ng-bind-html="product.fields.original_price"></td>

@@ -122,6 +122,16 @@ def delete_items(request):
                 w.delete()
     return HttpResponse(json.dumps({'info': 0}), content_type="application/json")
 
+@csrf_exempt
+def set_mark(request):
+    if request.method == 'POST':
+        j = json.loads(request.body)
+        pk = j.get('pk', None)
+        w = Watchlist.objects.filter(user=request.user, product__pk=pk).get()
+        w.mark = (w.mark == False)
+        w.save()
+    return HttpResponse(json.dumps({'info': 0}), content_type="application/json")
+
 def sync(request):
     management.call_command('runcrons')
     return HttpResponse(json.dumps({'info': 0}), content_type="application/json")

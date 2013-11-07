@@ -30,7 +30,11 @@ app.factory('productFactory', ['$http', function ($http) {
 
     productFactory.dummy = function () {
         return $http.get(urlBase + 'sync/');
-    }
+    };
+
+    productFactory.setMark = function (data) {
+        return $http.post(urlBase + 'set_mark/', data);
+    };
 
     return productFactory;
 }]);
@@ -70,6 +74,7 @@ app.controller('brochureController', ['$scope', 'productFactory', function ($sco
                     for (var j = 0; j < watchlist.length; j++) {
                         if (products[i].pk === watchlist[j].fields.product) {
                             products[i].fields.desire_price = watchlist[j].fields.desire_price;
+                            products[i].fields.mark = watchlist[j].fields.mark;
                         }
                     }
                 }
@@ -84,6 +89,7 @@ app.controller('brochureController', ['$scope', 'productFactory', function ($sco
         $('#table').show();
     };
     $scope.addLink = function () {
+        $('#url').val('');
         $('#menubar').hide();
         $('#hr').hide();
         $('#table').hide();
@@ -125,6 +131,7 @@ app.controller('brochureController', ['$scope', 'productFactory', function ($sco
                         for (var j = 0; j < watchlist.length; j++) {
                             if (products[i].pk === watchlist[j].fields.product) {
                                 products[i].fields.desire_price = watchlist[j].fields.desire_price;
+                                products[i].fields.mark = watchlist[j].fields.mark;
                             }
                         }
                     }
@@ -165,4 +172,14 @@ app.controller('brochureController', ['$scope', 'productFactory', function ($sco
             }
         }
     };
+    $scope.markClicked = function (pk) {
+        var target = $("body")[0];
+        $scope.spinner = Spinner(opts).spin(target);
+        data = {
+            'pk': pk,
+        }
+        productFactory.setMark(data).success(function (info) {
+            $scope.spinner.stop();
+        });
+    }
 }]);

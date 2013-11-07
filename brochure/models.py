@@ -21,6 +21,7 @@ class Watchlist(models.Model):
     product = models.ForeignKey(Product)
     user = models.ForeignKey(User)
     desire_price = models.DecimalField(max_digits=10, decimal_places=6)
+    mark = models.BooleanField(default=True)
 
     def __unicode__(self):
         return self.product.name + ' ' + str(self.desire_price)
