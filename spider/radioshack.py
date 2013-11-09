@@ -1,6 +1,8 @@
 from spider_base import BaseSpider
 import re
 import requests
+from helper import send_mail
+from brochure.models import *
 
 
 class RadioShackSpider(BaseSpider):
@@ -8,14 +10,29 @@ class RadioShackSpider(BaseSpider):
         BaseSpider.__init__(self)
 
     def run(self):
-        products = Product.objects.all()
+        print 'Radio: run'
+        products = Product.objects.filter(website='radio')
         for product in products:
             print product.name
             print 'Before:' + str(product.current_price)
             p = self.query(product.url)
-            if product.current_price != float(p['current_price']):
-                product.current_price = p['current_price']
+            if str(product.current_price) != str(p['current_price']):
+                prev_price = product.current_price
+                product.current_price = float(p['current_price'])
                 product.save()
+                watchlist = Watchlist.objects.filter(product__pk=product.pk)
+                to_list = []
+                for w in watchlist:
+                    user = w.user
+                    s = Setting.objects.filter(user=user).get()
+                    if float(w.desire_price) >= float(product.current_price):
+                        if float(product.original_price) > float(s.amount):
+                            if int(product.original_price) != 0:
+                                if float(product.original_price) * float(s.percent) > float(product.current_price):
+                                    to_list.append(w.email)
+                            else:
+                                to_list.append(w.email)
+                send_mail(product, to_list)
                 print 'After:' + str(product.current_price)
 
     def query(self, url):

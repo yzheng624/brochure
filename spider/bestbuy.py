@@ -5,9 +5,9 @@ try:
     from brochure.models import *
 except:
     pass
-from django.core.mail import send_mail
 from premix import ProductQuery
 import json
+from helper import send_mail
 
 
 class BestBuySpider(BaseSpider):
@@ -16,6 +16,7 @@ class BestBuySpider(BaseSpider):
         self.api_key = '5q7nvwnwfm5bc9xk7qbgb3gb'
 
     def run(self):
+        print 'BestBuy: run'
         products = Product.objects.filter(website='bestbuy')
         for product in products:
             print product.name
@@ -28,19 +29,16 @@ class BestBuySpider(BaseSpider):
                 watchlist = Watchlist.objects.filter(product__pk=product.pk)
                 to_list = []
                 for w in watchlist:
+                    user = w.user
+                    s = Setting.objects.filter(user=user).get()
                     if float(w.desire_price) >= float(product.current_price):
-                        to_list.append(w.user.email)
-                content = 'Type: ' + product.type + '\n'
-                content += 'Item: ' + product.name + '\n'
-                content += 'Sku: ' + product.uuid + '\n'
-                content += 'Current Price: ' + str(product.current_price) + '\n'
-                content += 'Reason: Price Drop\n'
-                content += 'Item Link: ' + product.url + '\n'
-                content += 'Amazon Link: ' \
-                           + 'http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=' \
-                           + product.name
-                send_mail(product.name + '\'s price been updated', content,
-                          'brochuredev@126.com', to_list, fail_silently=False)
+                        if float(product.original_price) > float(s.amount):
+                            if int(product.original_price) != 0:
+                                if float(product.original_price) * float(s.percent) > float(product.current_price):
+                                    to_list.append(w.email)
+                            else:
+                                to_list.append(w.email)
+                send_mail(product, to_list)
                 print 'After:' + str(product.current_price)
 
     def query(self, url):
