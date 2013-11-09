@@ -30,7 +30,8 @@ class StaplesSpider(BaseSpider):
         p = {}
         r = self.bot.get(url, headers=self.headers)
         html = r.content
-        price = re.findall(r'<span class="finalPrice">\$([\d.,]+).</span>', html, re.DOTALL)
+        price = re.findall(r'class="finalPrice">.*?\$([\d.,]+)', html, re.DOTALL)
+        print price
         name = re.findall(r'<title>(.*?)</title>', html, re.DOTALL)
         p['name'] = name[0].split('|')[0]
         p['current_price'] = price[0]

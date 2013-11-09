@@ -1,6 +1,8 @@
 from spider_base import BaseSpider
 import re
 import requests
+from brochure.models import *
+import HTMLParser
 
 
 class MSStoreSpider(BaseSpider):
@@ -22,10 +24,17 @@ class MSStoreSpider(BaseSpider):
         p = {}
         r = requests.get(url, headers=self.headers)
         html = r.content
-        price = re.findall(r'<meta name="twitter:data1" content="\$([\d.,]+)"/>', html, re.DOTALL)
+        #try:
+        price = re.findall(r'<meta name="twitter:data1" content="[\w]* ?\$([\d.,]+)"/>', html, re.DOTALL)
+        if len(price) == 0:
+            price = re.findall(r'<span itemprop="price">\$([\d.,]+) ?</span>', html)
         name = re.findall(r'<meta name="twitter:title" content="(.*?)"/>', html, re.DOTALL)
+        if len(name) == 0:
+            name = re.findall(r'pname: \[\'(.*?)\'\]', html, re.DOTALL)
+        print name
         original = re.findall(r'strikethrough">\$([\d,.]+)</span>', html)
-        p['name'] = name[0].split('"')[0]
+        h = HTMLParser.HTMLParser()
+        p['name'] = h.unescape(name[0].split('"')[0])
         p['current_price'] = price[0]
         p['uuid'] = self.get_uuid(url)
         try:
@@ -34,6 +43,13 @@ class MSStoreSpider(BaseSpider):
             p['original_price'] = 0.0
         type = re.findall(r'busgrp : \[\'([\w]+)\'\]', html)
         p['type'] = type[0]
+        #except:
+        #    price = re.findall(r'<span itemprop="price">\$([\d.,]+) ?</span>', html)
+        #    p = {
+        #        'current_price': price[0],
+        #        'uuid': self.get_uuid(url),
+        #        'original_price':
+        #    }
         return p
 
     @staticmethod

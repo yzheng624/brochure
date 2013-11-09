@@ -15,6 +15,7 @@ class UpdateCronJob(CronJobBase):
         print 'UpdateCronJob runs~'
         b = BestBuySpider()
         b.run()
+        print 'UpdateCronJob finished~'
 
 if __name__ == '__main__':
     management.call_command('runcrons')

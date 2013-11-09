@@ -95,7 +95,7 @@
                 <th>M</th>
                 <th><a href="" ng-click="predicate = 'fields.name'; reverse=!reverse">Product Name</a></th>
                 <th><a href="" ng-click="predicate = 'fields.current_price'; reverse=!reverse">Current Price</a></th>
-                <th><a href="" ng-click="predicate = 'fields.original_price'; reverse=!reverse">Original Price</a></th>
+                <th class="original_price"><a href="" ng-click="predicate = 'fields.original_price'; reverse=!reverse">Original Price</a></th>
                 <th><a href="" ng-click="predicate = 'fields.desire_price'; reverse=!reverse">Desired Price</a></th>
                 <th>Amazon</th>
                 <th><a href="" ng-click="predicate = 'fields.status'; reverse=!reverse">Status</a></th>
@@ -108,7 +108,7 @@
                 <td><input type="checkbox" ng-model="product.fields.mark" ng-click="markClicked(product.pk)"/></td>
                 <td><a href="{{ product.fields.url }}" ng-bind-html="product.fields.name" target="_blank"></a></td>
                 <td ng-bind-html="product.fields.current_price"></td>
-                <td ng-bind-html="product.fields.original_price"></td>
+                <td ng-hide="false" ng-bind-html="product.fields.original_price"></td>
                 <td>
                     <a href="#" editable-text="product.fields.desire_price" onbeforesave="updatePrice(product.pk, $data)">{{ product.fields.desire_price || "empty" }}</a>
                 </td>

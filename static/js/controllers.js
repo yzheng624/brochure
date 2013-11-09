@@ -80,6 +80,9 @@ app.controller('brochureController', ['$scope', 'productFactory', function ($sco
         productFactory.getAll(store_name).success(function (products) {
             productFactory.getWatchlist(store_name).success(function (watchlist) {
                 for (var i = 0; i < products.length; i++) {
+                    if (products[i].fields.original_price == 0) {
+                        products[i].fields.original_price = 'Unknown';
+                    }
                     for (var j = 0; j < watchlist.length; j++) {
                         if (products[i].pk === watchlist[j].fields.product) {
                             products[i].fields.desire_price = watchlist[j].fields.desire_price;
@@ -98,6 +101,7 @@ app.controller('brochureController', ['$scope', 'productFactory', function ($sco
         $('#table').show();
     };
     $scope.addLink = function () {
+        $scope.info = 'Something is wrong.';
         $('#url').val('');
         $('#menubar').hide();
         $('#hr').hide();
@@ -142,6 +146,9 @@ app.controller('brochureController', ['$scope', 'productFactory', function ($sco
             productFactory.getAll($scope.store_name).success(function (products) {
                 productFactory.getWatchlist($scope.store_name).success(function (watchlist) {
                     for (var i = 0; i < products.length; i++) {
+                        if (products[i].fields.original_price == 0) {
+                            products[i].fields.original_price = 'Unknown';
+                        }
                         for (var j = 0; j < watchlist.length; j++) {
                             if (products[i].pk === watchlist[j].fields.product) {
                                 products[i].fields.desire_price = watchlist[j].fields.desire_price;

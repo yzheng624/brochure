@@ -35,7 +35,10 @@ def signin(request):
             login(request, user)
             return redirect('/')
         else:
-            pass
+            c = {}
+            c.update(csrf(request))
+            c['info'] = 'The username and password were incorrect.'
+            return render_to_response('signin.html', c)
     else:
         c = {}
         c.update(csrf(request))
@@ -82,10 +85,10 @@ def query(request):
         elif store_name == 'home':
             home = HomeDepotSpider()
             product = home.query(url)
+        info = ''
         if Product.objects.filter(uuid=product['uuid'], website=store_name).exists():
-            info = 'Item has already been added.'
-        else:
-            info = ''
+            if Watchlist.objects.filter(user=request.user, product=Product.objects.filter(uuid=product['uuid'], website=store_name).get()).exists():
+                info = 'Item has already been added.'
         product['info'] = info
         return HttpResponse(json.dumps(product), content_type="application/json")
 
@@ -111,7 +114,7 @@ def add_item(request):
         sale_price = str(j.get('current_price', None)).replace(',', '')
         desire_price = j.get('desire_price', None).replace(',', '')
         uuid = j.get('uuid', None)
-        original_price = j.get('original_price', None)
+        original_price = j.get('original_price', 0.0)
         email = j.get('email', None)
         p = Product(name=name, url=url, current_price=sale_price, original_price=original_price,
                     error=False, website=store_name, uuid=uuid, type=type, json={})

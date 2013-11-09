@@ -26,6 +26,8 @@ class RadioShackSpider(BaseSpider):
         name = re.findall(r'<strong>(.*?)</strong>', html, re.DOTALL)
         p['name'] = name[0].split('"')[0]
         p['current_price'] = price[0]
+        price = re.findall(r'class="reg_price">&#036;([\d.,]+)</', html, re.DOTALL)
+        p['original_price'] = price[0]
         p['uuid'] = self.get_uuid(url)
         # p['original_price'] = price[1][0]
         return p
