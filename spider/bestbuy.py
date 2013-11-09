@@ -20,7 +20,7 @@ class BestBuySpider(BaseSpider):
         for product in products:
             print product.name
             print 'Before:' + str(product.current_price)
-            p = self.query(product.url)
+            p, _ = self.query(product.url)
             if str(product.current_price) != str(p['current_price']):
                 prev_price = product.current_price
                 product.current_price = float(p['current_price'])

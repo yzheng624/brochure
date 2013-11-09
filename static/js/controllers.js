@@ -68,6 +68,7 @@ app.controller('brochureController', ['$scope', 'productFactory', function ($sco
     productFactory.dummy();
     $scope.predicate = 'fields.current_price';
     $scope.reverse = false;
+    $scope.info = 'Something is wrong.';
     $scope.itemClicked = function (store_name) {
         $('#addLink').hide();
         $('#addLinkNext').hide();
@@ -110,11 +111,16 @@ app.controller('brochureController', ['$scope', 'productFactory', function ($sco
         $scope.spinner = Spinner(opts).spin(target);
         productFactory.query($scope.new.queryUrl, $scope.store_name).success(function (product) {
             $scope.spinner.stop();
-            url = $scope.new.queryUrl;
-            $scope.new = product;
-            $scope.new.queryUrl = url;
-            $('#addLinkNext').hide();
-            $('#addLinkDetail').show();
+            if (product.info != '') {
+                $scope.info = product.info;
+                $('#info').modal('show');
+            } else {
+                url = $scope.new.queryUrl;
+                $scope.new = product;
+                $scope.new.queryUrl = url;
+                $('#addLinkNext').hide();
+                $('#addLinkDetail').show();
+            }
         }).error(function () {
             $scope.spinner.stop();
             $('#info').modal('show');
