@@ -80,8 +80,10 @@ app.controller('brochureController', ['$scope', 'productFactory', function ($sco
         productFactory.getAll(store_name).success(function (products) {
             productFactory.getWatchlist(store_name).success(function (watchlist) {
                 for (var i = 0; i < products.length; i++) {
-                    if (products[i].fields.original_price == 0) {
-                        products[i].fields.original_price = 'Unknown';
+                    if (products[i].fields.error == true) {
+                        products[i].fields.error_text = 'Error';
+                    } else {
+                        products[i].fields.error_text = products[i].fields.last_update;
                     }
                     for (var j = 0; j < watchlist.length; j++) {
                         if (products[i].pk === watchlist[j].fields.product) {
@@ -148,6 +150,11 @@ app.controller('brochureController', ['$scope', 'productFactory', function ($sco
                     for (var i = 0; i < products.length; i++) {
                         if (products[i].fields.original_price == 0) {
                             products[i].fields.original_price = 'Unknown';
+                        }
+                        if (products[i].fields.error == true) {
+                            products[i].fields.error_text = 'Error';
+                        } else {
+                            products[i].fields.error_text = products[i].fields.last_update;
                         }
                         for (var j = 0; j < watchlist.length; j++) {
                             if (products[i].pk === watchlist[j].fields.product) {

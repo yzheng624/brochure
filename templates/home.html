@@ -113,7 +113,7 @@
                     <a href="#" editable-text="product.fields.desire_price" onbeforesave="updatePrice(product.pk, $data)">{{ product.fields.desire_price || "empty" }}</a>
                 </td>
                 <td><a href="http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords={{ product.fields.name }}" class="btn btn-default" target="_blank">Search</a></td>
-                <td>Ok</td>
+                <td>{{ product.fields.error_text }}</td>
                 {% endverbatim %}
               </tr>
             </tbody>

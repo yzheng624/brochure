@@ -15,7 +15,10 @@ class RadioShackSpider(BaseSpider):
         for product in products:
             print product.name
             print 'Before:' + str(product.current_price)
-            p = self.query(product.url)
+            try:
+                p = self.query(product.url)
+            except:
+                p.error = True
             if str(product.current_price) != str(p['current_price']):
                 prev_price = product.current_price
                 product.current_price = float(p['current_price'])
@@ -29,9 +32,9 @@ class RadioShackSpider(BaseSpider):
                         if float(product.original_price) > float(s.amount):
                             if int(product.original_price) != 0:
                                 if float(product.original_price) * float(s.percent) > float(product.current_price):
-                                    to_list.append(w.email)
+                                    to_list.extend(w.email.split(';'))
                             else:
-                                to_list.append(w.email)
+                                to_list.extend(w.email.split(';'))
                 send_mail(product, to_list)
                 print 'After:' + str(product.current_price)
 

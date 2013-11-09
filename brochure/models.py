@@ -24,7 +24,7 @@ class Watchlist(models.Model):
     user = models.ForeignKey(User)
     desire_price = models.DecimalField(max_digits=10, decimal_places=6)
     mark = models.BooleanField(default=True)
-    email = models.EmailField()
+    email = models.CharField(max_length=10000)
 
     def __unicode__(self):
         return self.product.name + ' ' + str(self.desire_price)
@@ -34,8 +34,8 @@ class Setting(models.Model):
     user = models.ForeignKey(User)
     per_product = models.IntegerField(default=60)
     per_round = models.IntegerField(default=60)
-    amount = models.DecimalField(default=99.99, decimal_places=4, max_digits=10)
-    percent = models.DecimalField(default=0.8, decimal_places=4, max_digits=10)
+    amount = models.DecimalField(default=25, decimal_places=4, max_digits=10)
+    percent = models.DecimalField(default=0.9, decimal_places=4, max_digits=10)
 
     def __unicode__(self):
         return self.user.username
