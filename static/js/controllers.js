@@ -1,4 +1,24 @@
-var app = angular.module('brochureApp', ['ngResource', 'ngSanitize', 'xeditable']);
+var app = angular.module('brochureApp', ['ngRoute', 'ngResource', 'ngSanitize', 'xeditable'],
+  function($routeProvider, $locationProvider) {
+    $routeProvider.when('/', {
+      templateUrl: '/welcome.html',
+      controller: 'mainCntl',
+      controllerAs: 'main'
+    });
+    $routeProvider.when('/store/:store_name', {
+      templateUrl: '/product.html',
+      controller: 'mainCntl',
+      controllerAs: 'main'
+    });
+    $routeProvider.when('/store/:store_name/:action', {
+      templateUrl: '/add_product.html',
+      controller: 'mainCntl',
+      controllerAs: 'main'
+    });
+
+    // configure html5 to get links working on jsfiddle
+    $locationProvider.html5Mode(true);
+});
 
 app.run(function(editableOptions) {
   editableOptions.theme = 'bs3'; // bootstrap3 theme. Can be also 'bs2', 'default'
@@ -47,7 +67,8 @@ app.factory('productFactory', ['$http', function ($http) {
     return productFactory;
 }]);
 
-app.controller('brochureController', ['$scope', 'productFactory', function ($scope, productFactory) {
+app.controller('mainCntl', ['$scope', 'productFactory', '$routeParams', function ($scope, productFactory, $routeParams) {
+    console.log($routeParams);
     var opts = {
             lines : 13, // The number of lines to draw
             length : 7, // The length of each line
@@ -74,7 +95,7 @@ app.controller('brochureController', ['$scope', 'productFactory', function ($sco
         $('#addLinkNext').hide();
         $('#addLinkDetail').hide();
         $scope.store_name = store_name;
-        $('.list-group-item').removeClass('active');
+        $('li').removeClass('active');
         var target = $("body")[0];
         $scope.spinner = Spinner(opts).spin(target);
         productFactory.getAll(store_name).success(function (products) {
@@ -102,6 +123,9 @@ app.controller('brochureController', ['$scope', 'productFactory', function ($sco
         $('#hr').show();
         $('#table').show();
     };
+    if ($routeParams['store_name'] && !$routeParams['action']) {
+        $scope.itemClicked($routeParams['store_name']);
+    }
     $scope.addLink = function () {
         $scope.info = 'Something is wrong.';
         $('#url').val('');
@@ -220,5 +244,8 @@ app.controller('brochureController', ['$scope', 'productFactory', function ($sco
         productFactory.updatePrice(data).success(function (info) {
             $scope.spinner.stop();
         });
+    };
+    $scope.pageClicked = function (store_name, page_name) {
+
     }
 }]);

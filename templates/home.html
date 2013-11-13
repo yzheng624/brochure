@@ -18,7 +18,7 @@
     <![endif]-->
   </head>
 
-  <body ng-controller="brochureController">
+  <body ng-controller="mainCntl">
 
     <div id="wrap">
     <div class="container">
@@ -35,9 +35,39 @@
             </div>
             <div class="collapse navbar-collapse">
               <ul class="nav navbar-nav">
-                <li class="active"><a href="#">Home</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#contact">Contact</a></li>
+                <li id="bestbuyList">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">BestBuy <b class="caret"></b></a></a>
+                    <ul class="dropdown-menu">
+                      <li><a href="/store/bestbuy">Single Product</a></li>
+                      <li><a href="#" ng-click="pageClicked('bestbuy')">Promotion Page</a></li>
+                      <li><a href="#">Instore</a></li>
+                      <li><a href="#">Regional</a></li>
+                    </ul>
+                </li>
+                <li id="msstoreList">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Microsoft Store <b class="caret"></b></a></a>
+                  <ul class="dropdown-menu">
+                      <li><a href="/store/msstore">Single Product</a></li>
+                  </ul>
+                </li>
+                <li id="staplesList">
+                  <a href="#"  class="dropdown-toggle" data-toggle="dropdown">Staples <b class="caret"></b></a></a>
+                  <ul class="dropdown-menu">
+                      <li><a href="/store/staples">Single Product</a></li>
+                  </ul>
+                </li>
+                <li id="radioList">
+                  <a href="#"  class="dropdown-toggle" data-toggle="dropdown">RadioShack <b class="caret"></b></a></a>
+                  <ul class="dropdown-menu">
+                      <li><a href="/store/radio">Single Product</a></li>
+                  </ul>
+                </li>
+                <li id="homeList">
+                  <a href="#"  class="dropdown-toggle" data-toggle="dropdown">Homedepot <b class="caret"></b></a></a>
+                  <ul class="dropdown-menu">
+                      <li><a href="/store/home">Single Product</a></li>
+                  </ul>
+                </li>
               </ul>
               <ul class="nav navbar-nav navbar-right">
                 <li>
@@ -54,109 +84,11 @@
       </div><!-- /.navbar -->
 
       <div class="row row-offcanvas row-offcanvas-right">
-        <div class="col-xs-6 col-sm-3 sidebar-offcanvas" id="sidebar" role="navigation">
-          <div class="list-group">
-            <a href="#" class="list-group-item" id="bestbuyList" ng-click="itemClicked('bestbuy')">BestBuy</a>
-            <a href="#" class="list-group-item" id="msstoreList" ng-click="itemClicked('msstore')">Microsoft Store</a>
-            <a href="#" class="list-group-item" id="staplesList" ng-click="itemClicked('staples')">Staples</a>
-            <a href="#" class="list-group-item" id="radioList" ng-click="itemClicked('radio')">RadioShack</a>
-            <a href="#" class="list-group-item" id="homeList" ng-click="itemClicked('home')">Homedepot</a>
-          </div>
-        </div>
+        <div class="col-xs-12 col-sm-12">
+          <div ng-view>
 
-        <div class="col-xs-12 col-sm-9">
-          <div class="jumbotron" id="welcome">
-              <h1>Welcome</h1>
           </div>
 
-          <div id="menubar" style="display: none;">
-            <div class="container">
-              <div class="row">
-                <form class="form-inline" role="form">
-                  <div class="form-group">
-                    <button type="button" class="btn btn-primary" ng-click="addLink()">Add</button>
-                  </div>
-                  <div class="form-group">
-                    <button type="button" class="btn btn-danger" ng-click="deleteItems()">Delete</button>
-                  </div>
-                  <div class="form-group">
-                    <input type="text" class="form-control" placeholder="Search" ng-model="searchText" />
-                  </div>
-              </div>
-            </div>
-          </div>
-
-          <hr id="hr" style="display: none;" />
-
-          <table class="table table-striped table-hover table-condensed table-responsive" id="table" style="display: none;">
-            <thead>
-              <tr>
-                <th><input type="checkbox" class="selectAll" ng-click="selectAll()"/></th>
-                <th>M</th>
-                <th><a href="" ng-click="predicate = 'fields.name'; reverse=!reverse">Product Name</a></th>
-                <th><a href="" ng-click="predicate = 'fields.current_price'; reverse=!reverse">Current Price</a></th>
-                <th class="original_price"><a href="" ng-click="predicate = 'fields.original_price'; reverse=!reverse">Original Price</a></th>
-                <th><a href="" ng-click="predicate = 'fields.desire_price'; reverse=!reverse">Desired Price</a></th>
-                <th>Amazon</th>
-                <th><a href="" ng-click="predicate = 'fields.status'; reverse=!reverse">Status</a></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr data-ng-repeat="product in products | orderBy:predicate:reverse | filter:searchText">
-                {% verbatim %}
-                <td><input type="checkbox" ng-model="selected[product.pk]"/></td>
-                <td><input type="checkbox" ng-model="product.fields.mark" ng-click="markClicked(product.pk)"/></td>
-                <td><a href="{{ product.fields.url }}" ng-bind-html="product.fields.name" target="_blank"></a></td>
-                <td ng-bind-html="product.fields.current_price"></td>
-                <td ng-hide="false" ng-bind-html="product.fields.original_price"></td>
-                <td>
-                    <a href="#" editable-text="product.fields.desire_price" onbeforesave="updatePrice(product.pk, $data)">{{ product.fields.desire_price || "empty" }}</a>
-                </td>
-                <td><a href="http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords={{ product.fields.name }}" class="btn btn-default" target="_blank">Search</a></td>
-                <td>{{ product.fields.error_text }}</td>
-                {% endverbatim %}
-              </tr>
-            </tbody>
-          </table>
-          {% verbatim %}
-          <div class="row" id="addLink" style="display: none;">
-            <form role="form">
-              <div class="form-group">
-                <label for="exampleInputEmail1">Link</label>
-                <input type="url" class="form-control" id="url" name="url" placeholder="http://www.example.com/" ng-model="new.queryUrl">
-              </div>
-              <div id="addLinkNext">
-                <button class="btn btn-default" ng-click="addLinkNext()">Next</button>
-              </div>
-              <div id="addLinkDetail">
-                  <div class="form-group">
-                    <label for="exampleInputPassword1">Product Name</label>
-                    <input type="text" class="form-control" id="product_name" name="product_name" placeholder="Duke Nukem Forever - Windows" ng-model="new.name">
-                  </div>
-                  <!--
-                  <div class="form-group">
-                    <label for="exampleInputPassword1">Original Price</label>
-                    <input type="text" class="form-control" id="original_price" name="original_price" placeholder="4.99" ng-model="new.original_price">
-                  </div>
-                  -->
-                  <div class="form-group">
-                    <label for="exampleInputPassword1">Sale Price</label>
-                    <input type="text" class="form-control" id="sale_price" name="sale_price" placeholder="6.99" ng-model="new.current_price">
-                  </div>
-                  <div class="form-group">
-                    <label for="exampleInputPassword1">Desire Price</label>
-                    <input type="text" class="form-control" id="desire_price" name="desire_price" ng-model="new.desire_price">
-                  </div>
-                  <div class="form-group">
-                    <label for="exampleInputPassword1">Email</label>
-                    <input type="text" class="form-control" id="email" name="email" placeholder="example@gmail.com"  ng-model="new.email">
-                  </div>
-                  <input type="hidden" id="uuid" name="uuid" ng-model="new.uuid">
-                  <button type="button" class="btn btn-default" ng-click="submitProduct()">Submit</button>
-              </div>
-            </form>
-          </div>
-          {% endverbatim %}
             <!-- Settings -->
             <div class="modal fade" id="settings" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
               <div class="modal-dialog">
@@ -245,6 +177,8 @@
     <script src="/static/js/angular-sanitize.min.js"></script>
     <script src="/static/js/angular-bootstrap.min.js"></script>
     <script src="/static/js/angular-bootstrap-prettify.min.js"></script>
+    <script src="/static/js/angular-route.min.js"></script>
+    <script src="/static/js/angular-animate.min.js"></script>
     <script src="/static/js/xeditable.js"></script>
     <script src="/static/js/spin.min.js"></script>
     <script src="/static/js/controllers.js"></script>

@@ -30,6 +30,15 @@ class Watchlist(models.Model):
         return self.product.name + ' ' + str(self.desire_price)
 
 
+class Page(models.Model):
+    description = models.CharField(max_length=1000)
+    error = models.BooleanField()
+    last_update = models.DateTimeField(auto_now=True)
+
+    def __unicode__(self):
+        return self.description
+
+
 class Setting(models.Model):
     user = models.ForeignKey(User)
     per_product = models.IntegerField(default=60)

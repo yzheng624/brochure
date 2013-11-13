@@ -1,0 +1,39 @@
+          <div id="pageMenubar">
+            <div class="container">
+              <div class="row">
+                <form class="form-inline" role="form">
+                   <div class="form-group">
+                     <button type="button" class="btn btn-primary" ng-click="addPage()">Add</button>
+                   </div>
+                   <div class="form-group">
+                     <button type="button" class="btn btn-danger" ng-click="deletePages()">Delete</button>
+                   </div>
+                   <div class="form-group">
+                     <input type="text" class="form-control" placeholder="Search" ng-model="searchText" />
+                   </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <hr id="pageHr" />
+
+          <table class="table table-striped table-hover table-condensed table-responsive" id="table">
+            <thead>
+              <tr>
+                <th><input type="checkbox" class="selectAll" ng-click="selectAll()"/></th>
+                <th>M</th>
+                <th><a href="" ng-click="predicate = 'fields.description'; reverse=!reverse">Page Description</a></th>
+                <th><a href="" ng-click="predicate = 'fields.status'; reverse=!reverse">Status</a></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr data-ng-repeat="product in products | orderBy:predicate:reverse | filter:searchText">
+                {% verbatim %}
+                <td><input type="checkbox" ng-model="selected[product.pk]"/></td>
+                <td><input type="checkbox" ng-model="product.fields.mark" ng-click="markClicked(product.pk)"/></td>
+                <td>{{ product.fields.error_text }}</td>
+                {% endverbatim %}
+              </tr>
+            </tbody>
+          </table>

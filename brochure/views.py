@@ -167,6 +167,23 @@ def update_price(request):
         w.save()
         return HttpResponse(json.dumps({'info': 0}), content_type="application/json")
 
+
 def sync(request):
     management.call_command('runcrons')
     return HttpResponse(json.dumps({'info': 0}), content_type="application/json")
+
+
+def product_html(reqest):
+    return render_to_response('product.html')
+
+
+def welcome_html(request):
+    return render_to_response('welcome.html')
+
+
+def page_html(request):
+    return render_to_response('page.html')
+
+
+def add_product_html(request):
+    return render_to_response('add_product.html')
