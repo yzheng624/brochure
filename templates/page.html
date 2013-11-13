@@ -1,9 +1,10 @@
+{% verbatim %}
           <div id="pageMenubar">
             <div class="container">
               <div class="row">
                 <form class="form-inline" role="form">
                    <div class="form-group">
-                     <button type="button" class="btn btn-primary" ng-click="addPage()">Add</button>
+                     <a href="/store/{{ store_name }}/page/add"><button type="button" class="btn btn-primary">Add</button></a>
                    </div>
                    <div class="form-group">
                      <button type="button" class="btn btn-danger" ng-click="deletePages()">Delete</button>
@@ -29,11 +30,10 @@
             </thead>
             <tbody>
               <tr data-ng-repeat="product in products | orderBy:predicate:reverse | filter:searchText">
-                {% verbatim %}
                 <td><input type="checkbox" ng-model="selected[product.pk]"/></td>
                 <td><input type="checkbox" ng-model="product.fields.mark" ng-click="markClicked(product.pk)"/></td>
                 <td>{{ product.fields.error_text }}</td>
-                {% endverbatim %}
               </tr>
             </tbody>
           </table>
+{% endverbatim %}

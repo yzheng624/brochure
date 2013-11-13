@@ -5,13 +5,23 @@ var app = angular.module('brochureApp', ['ngRoute', 'ngResource', 'ngSanitize', 
       controller: 'mainCntl',
       controllerAs: 'main'
     });
-    $routeProvider.when('/store/:store_name', {
+    $routeProvider.when('/store/:store_name/product', {
       templateUrl: '/product.html',
       controller: 'mainCntl',
       controllerAs: 'main'
     });
-    $routeProvider.when('/store/:store_name/:action', {
+    $routeProvider.when('/store/:store_name/product/:action', {
       templateUrl: '/add_product.html',
+      controller: 'mainCntl',
+      controllerAs: 'main'
+    });
+    $routeProvider.when('/store/:store_name/:page_name', {
+      templateUrl: '/page.html',
+      controller: 'mainCntl',
+      controllerAs: 'main'
+    });
+    $routeProvider.when('/store/:store_name/:page_name/:action', {
+      templateUrl: '/add_page.html',
       controller: 'mainCntl',
       controllerAs: 'main'
     });
@@ -67,8 +77,9 @@ app.factory('productFactory', ['$http', function ($http) {
     return productFactory;
 }]);
 
-app.controller('mainCntl', ['$scope', 'productFactory', '$routeParams', function ($scope, productFactory, $routeParams) {
+app.controller('mainCntl', ['$scope', 'productFactory', '$routeParams', '$location', function ($scope, productFactory, $routeParams, $location) {
     console.log($routeParams);
+    $scope.store_name = $routeParams['store_name'];
     var opts = {
             lines : 13, // The number of lines to draw
             length : 7, // The length of each line
@@ -169,36 +180,7 @@ app.controller('mainCntl', ['$scope', 'productFactory', '$routeParams', function
             'uuid': $scope.new.uuid
         };
         productFactory.addItem(data, $scope.store_name).success(function (info) {
-            productFactory.getAll($scope.store_name).success(function (products) {
-                productFactory.getWatchlist($scope.store_name).success(function (watchlist) {
-                    for (var i = 0; i < products.length; i++) {
-                        if (products[i].fields.original_price == 0) {
-                            products[i].fields.original_price = 'Unknown';
-                        }
-                        if (products[i].fields.error == true) {
-                            products[i].fields.error_text = 'Error';
-                        } else {
-                            products[i].fields.error_text = products[i].fields.last_update;
-                        }
-                        for (var j = 0; j < watchlist.length; j++) {
-                            if (products[i].pk === watchlist[j].fields.product) {
-                                products[i].fields.desire_price = watchlist[j].fields.desire_price;
-                                products[i].fields.mark = watchlist[j].fields.mark;
-                            }
-                        }
-                    }
-                });
-                $scope.spinner.stop();
-                $scope.products = products;
-                $scope.spinner.stop();
-            });
-
-            $('#addLink').hide();
-            $('#addLinkNext').hide();
-            $('#addLinkDetail').show();
-            $('#menubar').show();
-            $('#hr').show();
-            $('#table').show();
+            $location.path('/store/' + $scope.store_name);
         });
     };
     $scope.selected = {};
@@ -245,7 +227,4 @@ app.controller('mainCntl', ['$scope', 'productFactory', '$routeParams', function
             $scope.spinner.stop();
         });
     };
-    $scope.pageClicked = function (store_name, page_name) {
-
-    }
 }]);

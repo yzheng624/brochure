@@ -187,3 +187,7 @@ def page_html(request):
 
 def add_product_html(request):
     return render_to_response('add_product.html')
+
+
+def add_page_html(request):
+    return render_to_response('add_page.html')
