@@ -26,6 +26,10 @@ urlpatterns = patterns('',
     url(r'^page.html$', 'brochure.views.page_html'),
     url(r'^add_product.html$', 'brochure.views.add_product_html'),
     url(r'^add_page.html$', 'brochure.views.add_page_html'),
+    url(r'^add_page/$', 'brochure.views.add_page'),
+    url(r'^get_pages/$', 'brochure.views.get_pages'),
+    url(r'^page_products.html$', 'brochure.views.page_products_html'),
+    url(r'^get_page_products/$', 'brochure.views.get_page_products'),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),

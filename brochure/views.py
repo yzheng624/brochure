@@ -72,7 +72,7 @@ def query(request):
         product = None
         if store_name == 'bestbuy':
             bb = BestBuySpider()
-            product, _ = bb.query(url)
+            product = bb.query(url)
         elif store_name == 'msstore':
             mss = MSStoreSpider()
             product = mss.query(url)
@@ -105,10 +105,23 @@ def get_watchlist(request):
     return HttpResponse(serializers.serialize('json', watchlist), content_type="application/json")
 
 @csrf_exempt
+def get_pages(request):
+    store_name = json.loads(request.body).get('store_name', None)
+    pages = Page.objects.filter(user=request.user, store_name=store_name)
+    return HttpResponse(serializers.serialize('json', pages), content_type="application/json")
+
+@csrf_exempt
+def get_page_products(request):
+    pk = json.loads(request.body).get('pk', None)
+    page = Page.objects.filter(pk=pk).get()
+    products = page.product.all()
+    return HttpResponse(serializers.serialize('json', products), content_type="application/json")
+
+@csrf_exempt
 def add_item(request):
     if request.method == 'POST':
-        store_name = json.loads(request.body).get('store_name', None)
         j = json.loads(request.body)
+        store_name = j.get('store_name', None)
         url = j.get('url', None)
         name = j.get('name', None)
         sale_price = str(j.get('current_price', None)).replace(',', '')
@@ -121,6 +134,48 @@ def add_item(request):
         p.save()
         w = Watchlist(user=request.user, product=p, desire_price=desire_price, email=email)
         w.save()
+        return HttpResponse(json.dumps({'info': 0}), content_type="application/json")
+
+@csrf_exempt
+def add_page(request):
+    if request.method == 'POST':
+        j = json.loads(request.body)
+        url = j.get('url', None)
+        description = j.get('description', None)
+        least_price = j.get('least_price', None)
+        discount = j.get('discount', None)
+        email = j.get('email', None)
+        store_name = j.get('store_name', None)
+        page = Page(url=url, description=description, error=False, user=request.user, least_price=least_price,
+                 discount=discount, email=email, store_name=store_name)
+        page.save()
+        url_list = []
+        spider = None
+        if store_name == 'bestbuy':
+            spider = BestBuySpider()
+            url_list = spider.query_page(url)
+        elif store_name == 'msstore':
+            spider = MSStoreSpider()
+            product = spider.query(url)
+        elif store_name == 'radio':
+            radio = RadioShackSpider()
+            product = radio.query(url)
+        elif store_name == 'staples':
+            staple = StaplesSpider()
+            product = staple.query(url)
+        elif store_name == 'home':
+            home = HomeDepotSpider()
+            product = home.query(url)
+        for url in url_list:
+            try:
+                product = spider.query(url)
+            except:
+                continue
+            p = Product(name=product['name'], url=url, current_price=product['current_price'], original_price=product['original_price'],
+                        error=False, website=store_name, uuid=product['uuid'], type=product['type'], json={})
+            p.save()
+            page.product.add(p)
+        page.save()
         return HttpResponse(json.dumps({'info': 0}), content_type="application/json")
 
 @csrf_exempt
@@ -167,7 +222,6 @@ def update_price(request):
         w.save()
         return HttpResponse(json.dumps({'info': 0}), content_type="application/json")
 
-
 def sync(request):
     management.call_command('runcrons')
     return HttpResponse(json.dumps({'info': 0}), content_type="application/json")
@@ -191,3 +245,6 @@ def add_product_html(request):
 
 def add_page_html(request):
     return render_to_response('add_page.html')
+
+def page_products_html(request):
+    return render_to_response('page_products.html')

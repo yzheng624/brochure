@@ -81,11 +81,19 @@ class BestBuySpider(BaseSpider):
                 'original_price': j.get('regularPrice', None),
                 'uuid':  j.get('sku', None),
             }
-        return p, j
+        return p
+
+    def query_page(self, url):
+        r = requests.get(url, headers=self.headers)
+        html = r.content
+        t = re.findall(r'<a rel="product" href="(.+?)">', html, re.DOTALL)
+        for i in range(len(t)):
+            t[i] = 'http://www.bestbuy.com' + t[i]
+        return t
 
     @staticmethod
     def get_uuid(url):
-        sku = int(re.findall(r'skuId=(\d+)&', url)[0])
+        sku = int(re.findall(r'skuId=(\d+)&?', url)[0])
         return sku
 
     @staticmethod
@@ -98,5 +106,6 @@ class BestBuySpider(BaseSpider):
 
 if __name__ == '__main__':
     u = 'http://www.bestbuy.com/site/duke-nukem-forever-windows/2435079.p?id=1218328201673&skuId=2435079&strId=1436&strClr=true&ld=39.42216&lg=-76.78031&rd=25'
+    u2 = 'http://www.bestbuy.com/site/olstemplatemapper.jsp?_dyncharset=ISO-8859-1&id=pcat17080&type=page&lcn=Computers+%26+Tablets&sc=abComputerSP&usc=abcat0500000&cp=1&sp=-displaydate+skuid&nrp=15&qp=crootcategoryid~~cabcat0500000~~nf396||436c656172616e63652026204d6f7265'
     b = BestBuySpider()
-    print b.query(u)
+    print b.query_page(u2)

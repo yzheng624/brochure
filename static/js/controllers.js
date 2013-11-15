@@ -20,6 +20,11 @@ var app = angular.module('brochureApp', ['ngRoute', 'ngResource', 'ngSanitize', 
       controller: 'mainCntl',
       controllerAs: 'main'
     });
+    $routeProvider.when('/store/:store_name/:page_name/show/:pk', {
+      templateUrl: '/page_products.html',
+      controller: 'mainCntl',
+      controllerAs: 'main'
+    });
     $routeProvider.when('/store/:store_name/:page_name/:action', {
       templateUrl: '/add_page.html',
       controller: 'mainCntl',
@@ -74,6 +79,23 @@ app.factory('productFactory', ['$http', function ($http) {
         return $http.post(urlBase + 'update_price/', data);
     };
 
+    productFactory.addPage = function (data, store_name) {
+        data.store_name = store_name;
+        return $http.post(urlBase + 'add_page/', data);
+    };
+
+    productFactory.getAllPages = function (store_name) {
+        data = {'store_name': store_name};
+        return $http.post(urlBase + 'get_pages/', data);
+    };
+
+    productFactory.getPageProduct = function (pk) {
+        data = {
+            'pk': pk
+        };
+        return $http.post(urlBase + 'get_page_products/', data);
+    };
+
     return productFactory;
 }]);
 
@@ -102,9 +124,6 @@ app.controller('mainCntl', ['$scope', 'productFactory', '$routeParams', '$locati
     $scope.reverse = false;
     $scope.info = 'Something is wrong.';
     $scope.itemClicked = function (store_name) {
-        $('#addLink').hide();
-        $('#addLinkNext').hide();
-        $('#addLinkDetail').hide();
         $scope.store_name = store_name;
         $('li').removeClass('active');
         var target = $("body")[0];
@@ -129,12 +148,8 @@ app.controller('mainCntl', ['$scope', 'productFactory', '$routeParams', '$locati
             $scope.products = products;
         });
         $('#' + store_name +'List').addClass('active');
-        $('#welcome').hide();
-        $('#menubar').show();
-        $('#hr').show();
-        $('#table').show();
     };
-    if ($routeParams['store_name'] && !$routeParams['action']) {
+    if ($routeParams['store_name'] && !$routeParams['action'] && !$routeParams['page_name']) {
         $scope.itemClicked($routeParams['store_name']);
     }
     $scope.addLink = function () {
@@ -180,6 +195,7 @@ app.controller('mainCntl', ['$scope', 'productFactory', '$routeParams', '$locati
             'uuid': $scope.new.uuid
         };
         productFactory.addItem(data, $scope.store_name).success(function (info) {
+            $scope.spinner.stop();
             $location.path('/store/' + $scope.store_name);
         });
     };
@@ -227,4 +243,42 @@ app.controller('mainCntl', ['$scope', 'productFactory', '$routeParams', '$locati
             $scope.spinner.stop();
         });
     };
+    $scope.submitPage = function () {
+        var target = $("body")[0];
+        $scope.spinner = Spinner(opts).spin(target);
+        data = {
+            'url': $scope.new.url,
+            'description': $scope.new.description,
+            'least_price': $scope.new.least_price,
+            'discount': $scope.new.discount_percentage,
+            'email': $scope.new.email
+        };
+        productFactory.addPage(data, $scope.store_name).success(function (info) {
+            $scope.spinner.stop();
+            $location.path('/store/' + $scope.store_name +'/page');
+        });
+    };
+    $scope.pageClicked = function (store_name) {
+        $scope.store_name = store_name;
+        $('li').removeClass('active');
+        var target = $("body")[0];
+        $scope.spinner = Spinner(opts).spin(target);
+        productFactory.getAllPages(store_name).success(function (pages) {
+            $scope.selected = {};
+            for (var i = 0; i < pages.length; i++) {
+                $scope.selected[pages[i].pk] = true;
+            }
+            $scope.spinner.stop();
+            $scope.pages = pages;
+        });
+        $('#' + store_name +'List').addClass('active');
+    };
+    if ($routeParams['pk']) {
+        productFactory.getPageProduct($routeParams['pk']).success(function (products) {
+            $scope.products = products;
+        });
+    }
+    else if ($routeParams['store_name'] && !$routeParams['action'] && $routeParams['page_name']) {
+        $scope.pageClicked($routeParams['store_name']);
+    }
 }]);

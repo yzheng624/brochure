@@ -19,6 +19,23 @@ class Product(models.Model):
         return self.name
 
 
+class Page(models.Model):
+    user = models.ForeignKey(User)
+    url = models.URLField()
+    description = models.CharField(max_length=1000)
+    error = models.BooleanField()
+    last_update = models.DateTimeField(auto_now=True)
+    least_price = models.DecimalField(max_digits=10, decimal_places=6, blank=True)
+    discount = models.DecimalField(max_digits=10, decimal_places=6, blank=True)
+    email = models.CharField(max_length=10000, blank=True)
+    store_name = models.CharField(max_length=100)
+    mark = models.BooleanField(default=True)
+    product = models.ManyToManyField(Product)
+
+    def __unicode__(self):
+        return self.description
+
+
 class Watchlist(models.Model):
     product = models.ForeignKey(Product)
     user = models.ForeignKey(User)
@@ -28,15 +45,6 @@ class Watchlist(models.Model):
 
     def __unicode__(self):
         return self.product.name + ' ' + str(self.desire_price)
-
-
-class Page(models.Model):
-    description = models.CharField(max_length=1000)
-    error = models.BooleanField()
-    last_update = models.DateTimeField(auto_now=True)
-
-    def __unicode__(self):
-        return self.description
 
 
 class Setting(models.Model):
