@@ -10,23 +10,23 @@ from django.core import management
 
 
 class UpdateCronJob(CronJobBase):
-    RUN_EVERY_MINS = 1  # every 10 min
+    RUN_EVERY_MINS = 10  # every 10 min
 
     schedule = Schedule(run_every_mins=RUN_EVERY_MINS)
     code = 'brochure.update_cron_job'    # a unique code
 
     def do(self):
         print 'UpdateCronJob runs~'
-        b = BestBuySpider()
-        b.run()
-        h = HomeDepotSpider()
-        h.run()
-        m = MSStoreSpider()
-        m.run()
-        r = RadioShackSpider()
-        r.run()
-        s = StaplesSpider()
-        s.run()
+        #b = BestBuySpider()
+        #b.run()
+        #h = HomeDepotSpider()
+        #h.run()
+        #m = MSStoreSpider()
+        #m.run()
+        #r = RadioShackSpider()
+        #r.run()
+        #s = StaplesSpider()
+        #s.run()
         print 'UpdateCronJob finished~'
 
 if __name__ == '__main__':

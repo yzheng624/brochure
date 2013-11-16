@@ -147,7 +147,7 @@ def add_page(request):
         email = j.get('email', None)
         store_name = j.get('store_name', None)
         page = Page(url=url, description=description, error=False, user=request.user, least_price=least_price,
-                 discount=discount, email=email, store_name=store_name)
+                    discount=discount, email=email, store_name=store_name)
         page.save()
         url_list = []
         spider = None
@@ -156,7 +156,7 @@ def add_page(request):
             url_list = spider.query_page(url)
         elif store_name == 'msstore':
             spider = MSStoreSpider()
-            product = spider.query(url)
+            url_list = spider.query_page(url)
         elif store_name == 'radio':
             radio = RadioShackSpider()
             product = radio.query(url)
@@ -175,7 +175,7 @@ def add_page(request):
                         error=False, website=store_name, uuid=product['uuid'], type=product['type'], json={})
             p.save()
             page.product.add(p)
-        page.save()
+            page.save()
         return HttpResponse(json.dumps({'info': 0}), content_type="application/json")
 
 @csrf_exempt

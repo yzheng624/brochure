@@ -1,7 +1,10 @@
 from spider_base import BaseSpider
 import re
 import requests
-from brochure.models import *
+try:
+    from brochure.models import *
+except:
+    pass
 import HTMLParser
 from helper import send_mail
 
@@ -54,7 +57,7 @@ class MSStoreSpider(BaseSpider):
         original = re.findall(r'strikethrough">\$([\d,.]+)</span>', html)
         h = HTMLParser.HTMLParser()
         p['name'] = h.unescape(name[0].split('"')[0])
-        p['current_price'] = price[0]
+        p['current_price'] = price[0].replace(',', '')
         p['uuid'] = self.get_uuid(url)
         try:
             p['original_price'] = original[0].replace(',', '')
@@ -71,11 +74,21 @@ class MSStoreSpider(BaseSpider):
         #    }
         return p
 
+    def query_page(self, url):
+        r = requests.get(url, headers=self.headers)
+        html = r.content
+        t = re.findall(r'<a href="([a-zA-Z0-9_\-\./]+?)" pid-ref="[\d]+" class="product-control">', html, re.DOTALL)
+        for i in range(len(t)):
+            t[i] = 'http://www.microsoftstore.com' + t[i]
+        return t
+
     @staticmethod
     def get_uuid(url):
         return url.split('.')[-1]
 
 if __name__ == '__main__':
     u = 'http://www.microsoftstore.com/store/msusa/en_US/pdp/Acer-Aspire-A5600U-UR11-Touchscreen-All-in-One/productID.275592200'
+    u1 = 'http://www.microsoftstore.com/store/msusa/en_US/list/parentCategoryID.63436800/categoryID.63436900?'
     m = MSStoreSpider()
-    print m.query(u)
+    # print m.query(u)
+    print len(m.query_page(u1))

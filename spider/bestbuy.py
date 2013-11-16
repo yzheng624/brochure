@@ -49,29 +49,23 @@ class BestBuySpider(BaseSpider):
         r = requests.get(url, headers=self.headers)
         html = r.content
         try:
-            price = re.findall(r'price">(?:\$|<span class="denominator">\$</span>)([\d.,]+)(</span>|</div>)', html, re.DOTALL)
-            name = re.findall(r'<meta property="og:title" content="(.*?)"/>', html, re.DOTALL)
-            assert len(price) > 0
-
-            p['current_price'] = price[0][0]
-            product_query = ProductQuery.sku(int(p['uuid'])).show_all()
+            price = re.findall(r'price">(?:\$|<span class="denominator">\$</span>)([\d.,]+)(?:</span>|</div>)', html, re.DOTALL)
+            product_query = ProductQuery.sku(self.get_uuid(url)).show_all()
             api_url = product_query.url(self.api_key,  pid=int(self.get_pid(url)))
-            print api_url
+            print api_url, 0
             r = requests.get(api_url, headers=self.headers)
             j = json.loads(r.content)
-
-            p['original_price'] =  j.get('regularPrice', None)
             p = {
                 'name': j.get('name', None),
                 'type': j.get('type', None),
-                'current_price': j.get('salePrice', None),
+                'current_price': price[0].replace(',', ''),
                 'original_price': j.get('regularPrice', None),
                 'uuid':  j.get('sku', None),
             }
         except:
             product_query = ProductQuery.sku(self.get_uuid(url)).show_all()
             api_url = product_query.url(self.api_key,  pid=int(self.get_pid(url)))
-            print api_url
+            print api_url, 1
             r = requests.get(api_url, headers=self.headers)
             j = json.loads(r.content)
             p = {
@@ -107,5 +101,7 @@ class BestBuySpider(BaseSpider):
 if __name__ == '__main__':
     u = 'http://www.bestbuy.com/site/duke-nukem-forever-windows/2435079.p?id=1218328201673&skuId=2435079&strId=1436&strClr=true&ld=39.42216&lg=-76.78031&rd=25'
     u2 = 'http://www.bestbuy.com/site/olstemplatemapper.jsp?_dyncharset=ISO-8859-1&id=pcat17080&type=page&lcn=Computers+%26+Tablets&sc=abComputerSP&usc=abcat0500000&cp=1&sp=-displaydate+skuid&nrp=15&qp=crootcategoryid~~cabcat0500000~~nf396||436c656172616e63652026204d6f7265'
+    u3 = 'http://www.bestbuy.com/site/dell-xps-ultrabook-convertible-12-5-34-touch-screen-laptop-4gb-memory-carbon-fiber/7617041.p;jsessionid=50E46AE8D61064BE77B8BC718DEEDEDF.bbolsp-app04-177?id=1218855011514&skuId=7617041&strId=1516&strClr=true&ld=30.11261&lg=-97.35312&rd=25'
     b = BestBuySpider()
-    print b.query_page(u2)
+    print b.query(u3)
+    # print b.query_page(u2)

@@ -1,7 +1,10 @@
 from spider_base import BaseSpider
 import re
 import requests
-from brochure.models import *
+try:
+    from brochure.models import *
+except:
+    pass
 from helper import send_mail
 
 
@@ -60,11 +63,22 @@ class StaplesSpider(BaseSpider):
         # p['original_price'] = price[1][0]
         return p
 
+    def query_page(self, url):
+        r = self.bot.get(url, headers=self.headers)
+        html = r.content
+        print html
+        t = re.findall(r'<h3><a  class ="url" target="_parent" href="(.*?)" alt', html, re.DOTALL)
+        for i in range(len(t)):
+            t[i] = 'http://www.staples.com' + t[i]
+        return t
+
     @staticmethod
     def get_uuid(url):
         return url.split('_')[-1]
 
 if __name__ == '__main__':
     u = 'http://www.staples.com/Toshiba-C855-S5350-156-Laptop/product_984635'
+    u2 = 'http://www.staples.com/Webcams/cat_CL140467'
     m = StaplesSpider()
-    print m.query(u)
+    print m.query_page(u2)
+    #print m.query(u)

@@ -256,6 +256,9 @@ app.controller('mainCntl', ['$scope', 'productFactory', '$routeParams', '$locati
         productFactory.addPage(data, $scope.store_name).success(function (info) {
             $scope.spinner.stop();
             $location.path('/store/' + $scope.store_name +'/page');
+        }).error(function () {
+            $scope.spinner.stop();
+            $('#info').modal('show');
         });
     };
     $scope.pageClicked = function (store_name) {
