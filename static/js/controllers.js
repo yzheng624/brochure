@@ -210,7 +210,7 @@ app.controller('mainCntl', ['$scope', 'productFactory', '$routeParams', '$locati
         };
         productFactory.addItem(data, $scope.store_name).success(function (info) {
             $scope.spinner.stop();
-            $location.path('/store/' + $scope.store_name);
+            $location.path('/store/' + $scope.store_name + '/product');
         });
     };
     $scope.selected = {};

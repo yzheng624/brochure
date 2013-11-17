@@ -48,49 +48,70 @@ class BestBuySpider(BaseSpider):
         p = {}
         r = requests.get(url, headers=self.headers)
         html = r.content
-        try:
-            price = re.findall(r'price">(?:\$|<span class="denominator">\$</span>)([\d.,]+)(?:</span>|</div>)', html, re.DOTALL)
-            print price
-            product_query = ProductQuery.sku(self.get_uuid(url)).show_all()
-            api_url = product_query.url(self.api_key,  pid=int(self.get_pid(url)))
-            print api_url, 0
-            r = requests.get(api_url, headers=self.headers)
-            j = json.loads(r.content)
+        if url.startswith('https://clearance.bestbuy.com'):
+            original_price = re.findall(r'original-price">\$([\d.,]+)</span>', html, re.DOTALL)
+            current_price = re.findall(r'<div class="your-price(?:.*?)">\$([\d.,]+)</div>', html, re.DOTALL)
+            name = re.findall(r'<meta property="og:title" content="(.*?)"/>', html, re.DOTALL)
+            sku = re.findall(r'<span><strong>SKU:</strong> ([\d]+)</span>', html, re.DOTALL)
+            print original_price, current_price
             p = {
-                'name': j.get('name', None),
-                'type': j.get('type', None),
-                'current_price': price[0].replace(',', ''),
-                'original_price': price[1].replace(',', ''),
-                'uuid':  j.get('sku', None),
+                'name': name[0],
+                'type': 'None',
+                'current_price': original_price[0],
+                'original_price': current_price[0],
+                'uuid':  sku[0],
             }
-        except:
-            product_query = ProductQuery.sku(self.get_uuid(url)).show_all()
-            api_url = product_query.url(self.api_key,  pid=int(self.get_pid(url)))
-            print api_url, 1
-            r = requests.get(api_url, headers=self.headers)
-            j = json.loads(r.content)
-            p = {
-                'name': j.get('name', None),
-                'type': j.get('type', None),
-                'current_price': j.get('salePrice', None),
-                'original_price': j.get('regularPrice', None),
-                'uuid':  j.get('sku', None),
-            }
+        else:
+            try:
+                price = re.findall(r'price">(?:\$|<span class="denominator">\$</span>)([\d.,]+)(?:</span>|</div>)', html, re.DOTALL)
+                print price
+                product_query = ProductQuery.sku(self.get_uuid(url)).show_all()
+                api_url = product_query.url(self.api_key,  pid=int(self.get_pid(url)))
+                print api_url, 0
+                r = requests.get(api_url, headers=self.headers)
+                j = json.loads(r.content)
+                p = {
+                    'name': j.get('name', None),
+                    'type': j.get('type', None),
+                    'current_price': price[0].replace(',', ''),
+                    'original_price': price[1].replace(',', ''),
+                    'uuid':  j.get('sku', None),
+                }
+            except:
+                product_query = ProductQuery.sku(self.get_uuid(url)).show_all()
+                api_url = product_query.url(self.api_key,  pid=int(self.get_pid(url)))
+                print api_url, 1
+                r = requests.get(api_url, headers=self.headers)
+                j = json.loads(r.content)
+                p = {
+                    'name': j.get('name', None),
+                    'type': j.get('type', None),
+                    'current_price': j.get('salePrice', None),
+                    'original_price': j.get('regularPrice', None),
+                    'uuid':  j.get('sku', None),
+                }
         return p
 
     def query_page(self, url):
         print url
-        r = requests.get(url, headers=self.headers)
-        html = r.content
-        t = re.findall(r'<a rel="product" href="(.+?)">', html, re.DOTALL)
-        for i in range(len(t)):
-            t[i] = 'http://www.bestbuy.com' + t[i]
-        if len(t) > 0:
-            q = url.split('=')
-            url_raw = ''
-            for p in q[:-1]:
-                url_raw += p + '='
-            t.extend(self.query_page(url_raw + str(int(q[-1]) + 1)))
+        if url.startswith('https://clearance.bestbuy.com'):
+            r = requests.get(url, headers=self.headers)
+            html = r.content
+            t = re.findall(r'<a href="(.+?)">', html, re.DOTALL)
+            for i in range(len(t)):
+                t[i] = 'https://clearance.bestbuy.com' + t[i]
+        else:
+            r = requests.get(url, headers=self.headers)
+            html = r.content
+            t = re.findall(r'<a rel="product" href="(.+?)">', html, re.DOTALL)
+            for i in range(len(t)):
+                t[i] = 'http://www.bestbuy.com' + t[i]
+            if len(t) > 0:
+                q = url.split('=')
+                url_raw = ''
+                for p in q[:-1]:
+                    url_raw += p + '='
+                t.extend(self.query_page(url_raw + str(int(q[-1]) + 1)))
         return t
 
     @staticmethod
