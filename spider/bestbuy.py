@@ -97,7 +97,7 @@ class BestBuySpider(BaseSpider):
         if url.startswith('https://clearance.bestbuy.com'):
             r = requests.get(url, headers=self.headers)
             html = r.content
-            t = re.findall(r'<a href="(.+?)" class="pricing-link">', html, re.DOTALL)
+            t = re.findall(r'<a href="(.*?)" class="pricing-link">', html, re.DOTALL)
             for i in range(len(t)):
                 t[i] = 'https://clearance.bestbuy.com' + t[i]
         else:
