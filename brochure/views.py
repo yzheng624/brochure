@@ -14,6 +14,10 @@ from django.core.context_processors import csrf
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout
+from rq import Connection, Queue
+from redis import Redis
+import os
+import django_rq
 
 
 def home(request):
@@ -148,6 +152,17 @@ def add_item(request):
         return HttpResponse(json.dumps({'info': 0}), content_type="application/json")
 
 
+def add_product_from_url(url, page, spider, store_name):
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "brochure.settings")
+    product = spider.query(url)
+    p = Product(name=product['name'], url=url, current_price=product['current_price'],
+                original_price=product['original_price'], error=False, website=store_name,
+                uuid=product['uuid'], type=product['type'], json={})
+    p.save()
+    page.product.add(p)
+    page.save()
+
+
 @csrf_exempt
 def add_page(request):
     if request.method == 'POST':
@@ -178,17 +193,12 @@ def add_page(request):
         elif store_name == 'home':
             spider = HomeDepotSpider()
             url_list = spider.query(url)
+
+        queue = django_rq.get_queue('high')
+
         for url in url_list:
-            #try:
-            product = spider.query(url)
-            #except:
-            #    continue
-            p = Product(name=product['name'], url=url, current_price=product['current_price'],
-                        original_price=product['original_price'], error=False, website=store_name,
-                        uuid=product['uuid'], type=product['type'], json={})
-            p.save()
-            page.product.add(p)
-            page.save()
+            queue.enqueue(add_product_from_url, url, page, spider, store_name)
+
         return HttpResponse(json.dumps({'info': 0}), content_type="application/json")
 
 

@@ -132,6 +132,7 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
     'brochure',
     'django_cron',
+    'django_rq'
 )
 
 # for django cron
@@ -179,3 +180,21 @@ EMAIL_PORT = 25
 DEFAULT_FROM_EMAIL = 'brochuredev@126.com'
 SERVER_EMAIL = 'brochuredev@126.com'
 
+# RQ
+RQ_QUEUES = {
+    'default': {
+        'HOST': 'localhost',
+        'PORT': 6379,
+        'DB': 0,
+        'PASSWORD': '',
+    },
+    'high': {
+        'URL': os.getenv('REDISTOGO_URL', 'redis://localhost:6379'), # If you're on Heroku
+        'DB': 0,
+    },
+    'low': {
+        'HOST': 'localhost',
+        'PORT': 6379,
+        'DB': 0,
+    }
+}
