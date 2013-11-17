@@ -50,6 +50,7 @@ class BestBuySpider(BaseSpider):
         html = r.content
         try:
             price = re.findall(r'price">(?:\$|<span class="denominator">\$</span>)([\d.,]+)(?:</span>|</div>)', html, re.DOTALL)
+            print price
             product_query = ProductQuery.sku(self.get_uuid(url)).show_all()
             api_url = product_query.url(self.api_key,  pid=int(self.get_pid(url)))
             print api_url, 0
@@ -59,7 +60,7 @@ class BestBuySpider(BaseSpider):
                 'name': j.get('name', None),
                 'type': j.get('type', None),
                 'current_price': price[0].replace(',', ''),
-                'original_price': j.get('regularPrice', None),
+                'original_price': price[1].replace(',', ''),
                 'uuid':  j.get('sku', None),
             }
         except:
