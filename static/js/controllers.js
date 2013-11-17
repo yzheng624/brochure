@@ -111,7 +111,7 @@ app.factory('productFactory', ['$http', function ($http) {
     return productFactory;
 }]);
 
-app.controller('mainCntl', ['$scope', 'productFactory', '$routeParams', '$location', function ($scope, productFactory, $routeParams, $location) {
+app.controller('mainCntl', ['$scope', 'productFactory', '$routeParams', '$location', '$route', function ($scope, productFactory, $routeParams, $location, $route) {
     console.log($routeParams);
     $scope.store_name = $routeParams['store_name'];
     var opts = {
@@ -322,7 +322,7 @@ app.controller('mainCntl', ['$scope', 'productFactory', '$routeParams', '$locati
     $scope.deletePages = function () {
         console.log($scope.selected);
         productFactory.deletePages($scope.selected).success(function (info) {
-            $location.path('/store/' + $routeParams['store_name'] + '/' + $routeParams['page_name']);
+            $route.reload();
         });
     };
     $scope.updateLeastPrice = function (pk, least_price) {
