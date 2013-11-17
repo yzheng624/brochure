@@ -136,6 +136,8 @@ app.controller('mainCntl', ['$scope', 'productFactory', '$routeParams', '$locati
         productFactory.getAll(store_name).success(function (products) {
             productFactory.getWatchlist(store_name).success(function (watchlist) {
                 for (var i = 0; i < products.length; i++) {
+                    products[i].fields.original_price = parseFloat(products[i].fields.original_price);
+                    products[i].fields.current_price = parseFloat(products[i].fields.current_price);
                     if (products[i].fields.error == true) {
                         products[i].fields.error_text = 'Error';
                     } else {
@@ -286,6 +288,8 @@ app.controller('mainCntl', ['$scope', 'productFactory', '$routeParams', '$locati
     if ($routeParams['pk']) {
         productFactory.getPageProduct($routeParams['pk']).success(function (products) {
             for (var i = 0; i < products.length; i++) {
+                products[i].fields.original_price = parseFloat(products[i].fields.original_price);
+                products[i].fields.current_price = parseFloat(products[i].fields.current_price);
                 products[i].fields.discount_amount = Math.round(((products[i].fields.original_price) - (products[i].fields.current_price)) * 100) / 100;
                 products[i].fields.discount_percentage = Math.round((products[i].fields.discount_amount) / (products[i].fields.original_price) * 100) / 100;
             }

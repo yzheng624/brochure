@@ -28,10 +28,10 @@
             <tbody>
               <tr data-ng-repeat="product in products | orderBy:predicate:reverse | filter:searchText">
                 <td><a href="{{ product.fields.url }}" ng-bind-html="product.fields.name" target="_blank"></a></td>
-                <td ng-bind-html="product.fields.current_price"></td>
-                <td ng-bind-html="product.fields.original_price"></td>
-                <td>{{ product.fields.discount_amount }}</td>
-                <td>{{ product.fields.discount_percentage }}</td>
+                <td>{{ product.fields.current_price | number }}</td>
+                <td>{{ product.fields.original_price | number }}</td>
+                <td>{{ product.fields.discount_amount | number }}</td>
+                <td>{{ product.fields.discount_percentage | number }}</td>
                 <td><a href="http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords={{ product.fields.name }}" class="btn btn-default" target="_blank">Search</a></td>
               </tr>
             </tbody>
