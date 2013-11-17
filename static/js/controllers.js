@@ -274,7 +274,9 @@ app.controller('mainCntl', ['$scope', 'productFactory', '$routeParams', '$locati
         productFactory.getAllPages(store_name).success(function (pages) {
             $scope.selected = {};
             for (var i = 0; i < pages.length; i++) {
-                $scope.selected[pages[i].pk] = true;
+                $scope.selected[pages[i].pk] = false;
+                pages[i].fields.discount_amount = parseFloat(pages[i].fields.original_price) - parseFloat(pages[i].fields.current_price);
+                pages[i].fields.discount_percentage = parseFloat(pages[i].fields.discount_amount) / parseFloat(pages[i].fields.original_price);
             }
             $scope.spinner.stop();
             $scope.pages = pages;
@@ -283,6 +285,10 @@ app.controller('mainCntl', ['$scope', 'productFactory', '$routeParams', '$locati
     };
     if ($routeParams['pk']) {
         productFactory.getPageProduct($routeParams['pk']).success(function (products) {
+            for (var i = 0; i < products.length; i++) {
+                products[i].fields.discount_amount = Math.round(((products[i].fields.original_price) - (products[i].fields.current_price)) * 100) / 100;
+                products[i].fields.discount_percentage = Math.round((products[i].fields.discount_amount) / (products[i].fields.original_price) * 100) / 100;
+            }
             $scope.products = products;
         });
     }
