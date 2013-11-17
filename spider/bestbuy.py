@@ -79,11 +79,18 @@ class BestBuySpider(BaseSpider):
         return p
 
     def query_page(self, url):
+        print url
         r = requests.get(url, headers=self.headers)
         html = r.content
         t = re.findall(r'<a rel="product" href="(.+?)">', html, re.DOTALL)
         for i in range(len(t)):
             t[i] = 'http://www.bestbuy.com' + t[i]
+        if len(t) > 0:
+            q = url.split('=')
+            url_raw = ''
+            for p in q[:-1]:
+                url_raw += p + '='
+            t.extend(self.query_page(url_raw + str(int(q[-1]) + 1)))
         return t
 
     @staticmethod
