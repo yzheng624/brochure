@@ -75,12 +75,24 @@ class MSStoreSpider(BaseSpider):
         return p
 
     def query_page(self, url):
-        r = requests.get(url, headers=self.headers)
-        html = r.content
-        t = re.findall(r'<a href="([a-zA-Z0-9_\-\./]+?)" pid-ref="[\d]+" class="product-control">', html, re.DOTALL)
-        for i in range(len(t)):
-            t[i] = 'http://www.microsoftstore.com' + t[i]
-        return t
+        URL_FORMAT = 'http://www.microsoftstore.com/store/msusa/en_US/filter/categoryID.{}/startIndex.{}/size.64/sort.ranking%20ascending?keywords=&Env=BASE&callingPage=categoryProductListPage'
+        size = 1
+        counter = 0
+        ret = []
+        c = re.findall(r'categoryID\.([\d]+)', url)
+        cate_id = c[0]
+        while size != 0:
+            size = 0
+            url = URL_FORMAT.format(cate_id, counter * 64)
+            print url
+            r = requests.get(url, headers=self.headers)
+            html = r.content
+            t = re.findall(r'<a href="([a-zA-Z0-9_\-\./]+?)" pid-ref="[\d]+" class="product-control">', html, re.DOTALL)
+            for i in range(len(t)):
+                ret.append('http://www.microsoftstore.com' + t[i])
+                size = 1
+            counter += 1
+        return ret
 
     @staticmethod
     def get_uuid(url):
@@ -89,6 +101,9 @@ class MSStoreSpider(BaseSpider):
 if __name__ == '__main__':
     u = 'http://www.microsoftstore.com/store/msusa/en_US/pdp/Acer-Aspire-A5600U-UR11-Touchscreen-All-in-One/productID.275592200'
     u1 = 'http://www.microsoftstore.com/store/msusa/en_US/list/parentCategoryID.63436800/categoryID.63436900?'
+    t = 'http://www.microsoftstore.com/store/msusa/en_US/list/Laptops/parentCategoryID.62684600/categoryID.62685400'
+    t1 = 'http://www.microsoftstore.com/store/msusa/en_US/list/ThemeID.33363200/parentCategoryID.62686600/categoryID.66307400?icid=Sale_Page_Shop_All_Xbox_Games_093013'
     m = MSStoreSpider()
     # print m.query(u)
-    print len(m.query_page(u1))
+    print m.query_page(t1)
+    # print len(m.query_page(u1))
