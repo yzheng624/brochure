@@ -1,3 +1,4 @@
+// Remember: Quick and dirty
 var app = angular.module('brochureApp', ['ngRoute', 'ngResource', 'ngSanitize', 'xeditable'],
   function($routeProvider, $locationProvider) {
     $routeProvider.when('/', {
@@ -94,6 +95,10 @@ app.factory('productFactory', ['$http', function ($http) {
             'pk': pk
         };
         return $http.post(urlBase + 'get_page_products/', data);
+    };
+
+    productFactory.updateDescription = function (data) {
+        return $http.post(urlBase + 'update_description/', data);
     };
 
     return productFactory;
@@ -284,4 +289,21 @@ app.controller('mainCntl', ['$scope', 'productFactory', '$routeParams', '$locati
     else if ($routeParams['store_name'] && !$routeParams['action'] && $routeParams['page_name']) {
         $scope.pageClicked($routeParams['store_name']);
     }
+    $scope.clearActive = function () {
+        $('li').removeClass('active');
+    };
+    $scope.updateDescription = function (pk, description) {
+        var target = $("body")[0];
+        $scope.spinner = Spinner(opts).spin(target);
+        data = {
+            'pk': pk,
+            'description': description
+        };
+        productFactory.updateDescription(data).success(function (info) {
+            $scope.spinner.stop();
+        }).error(function (info) {
+            $scope.spinner.stop();
+            $('#info').modal('show');
+        });
+    };
 }]);

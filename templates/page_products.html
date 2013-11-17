@@ -20,6 +20,8 @@
                 <th><a href="" ng-click="predicate = 'fields.name'; reverse=!reverse">Product Name</a></th>
                 <th><a href="" ng-click="predicate = 'fields.current_price'; reverse=!reverse">Current Price</a></th>
                 <th class="original_price"><a href="" ng-click="predicate = 'fields.original_price'; reverse=!reverse">Original Price</a></th>
+                <th><a href="" ng-click="predicate = 'fields.discount_amount'; reverse=!reverse">Discount Amount</a></th>
+                <th><a href="" ng-click="predicate = 'fields.discount_percentage'; reverse=!reverse">Discount Percentage</a></th>
                 <th>Amazon</th>
               </tr>
             </thead>
@@ -28,6 +30,8 @@
                 <td><a href="{{ product.fields.url }}" ng-bind-html="product.fields.name" target="_blank"></a></td>
                 <td ng-bind-html="product.fields.current_price"></td>
                 <td ng-bind-html="product.fields.original_price"></td>
+                <td ng-bind-html="product.fields.discount_amount"></td>
+                <td ng-bind-html="product.fields.discount_percentage"></td>
                 <td><a href="http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords={{ product.fields.name }}" class="btn btn-default" target="_blank">Search</a></td>
               </tr>
             </tbody>

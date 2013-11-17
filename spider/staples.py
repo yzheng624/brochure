@@ -51,25 +51,29 @@ class StaplesSpider(BaseSpider):
                 print 'After:' + str(product.current_price)
 
     def query(self, url):
+        print url
         p = {}
         r = self.bot.get(url, headers=self.headers)
         html = r.content
         price = re.findall(r'class="finalPrice">.*?\$([\d.,]+)', html, re.DOTALL)
-        print price
+        # print price
         name = re.findall(r'<title>(.*?)</title>', html, re.DOTALL)
         p['name'] = name[0].split('|')[0]
         p['current_price'] = price[0]
         p['uuid'] = self.get_uuid(url)
-        # p['original_price'] = price[1][0]
+        p['original_price'] = 0.0
+        type = re.findall(r'<input type="hidden" var=\'category\' id=\'category\' value="(.*?)"', html, re.DOTALL)
+        p['type'] = type[0]
+        print type
         return p
 
     def query_page(self, url):
         r = self.bot.get(url, headers=self.headers)
         html = r.content
-        print html
         t = re.findall(r'<h3><a  class ="url" target="_parent" href="(.*?)" alt', html, re.DOTALL)
         for i in range(len(t)):
             t[i] = 'http://www.staples.com' + t[i]
+        print t
         return t
 
     @staticmethod

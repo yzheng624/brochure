@@ -42,6 +42,7 @@ class RadioShackSpider(BaseSpider):
         p = {}
         r = requests.get(url, headers=self.headers)
         html = r.content
+        # TODO Track Price
         price = re.findall(r'<span class="price">&#036;([\d.,]+)</span>', html, re.DOTALL)
         name = re.findall(r'<strong>(.*?)</strong>', html, re.DOTALL)
         p['name'] = name[0].split('"')[0]
@@ -51,6 +52,15 @@ class RadioShackSpider(BaseSpider):
         p['uuid'] = self.get_uuid(url)
         # p['original_price'] = price[1][0]
         return p
+
+    def query_page(self, url):
+        r = requests.get(url, headers=self.headers)
+        html = r.content
+        t = re.findall(r'<h2 class="productTitle"><a href="(.*?)">', html, re.DOTALL)
+        for i in range(len(t)):
+            t[i] = 'http://www.radioshack.com' + t[i]
+        print t
+        return t
 
     @staticmethod
     def get_uuid(url):

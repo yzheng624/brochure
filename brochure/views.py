@@ -24,7 +24,7 @@ def home(request):
         s = Setting.objects.filter(user=request.user).get()
         return render_to_response('home.html', locals())
     else:
-        return redirect('/signin/')
+        return redirect('/signup/')
 
 def signin(request):
     if request.method == 'POST':
@@ -158,19 +158,19 @@ def add_page(request):
             spider = MSStoreSpider()
             url_list = spider.query_page(url)
         elif store_name == 'radio':
-            radio = RadioShackSpider()
-            product = radio.query(url)
+            spider = RadioShackSpider()
+            url_list = spider.query_page(url)
         elif store_name == 'staples':
-            staple = StaplesSpider()
-            product = staple.query(url)
+            spider = StaplesSpider()
+            url_list = spider.query_page(url)
         elif store_name == 'home':
-            home = HomeDepotSpider()
-            product = home.query(url)
+            spider = HomeDepotSpider()
+            url_list = spider.query(url)
         for url in url_list:
-            try:
-                product = spider.query(url)
-            except:
-                continue
+            #try:
+            product = spider.query(url)
+            #except:
+            #    continue
             p = Product(name=product['name'], url=url, current_price=product['current_price'], original_price=product['original_price'],
                         error=False, website=store_name, uuid=product['uuid'], type=product['type'], json={})
             p.save()
@@ -220,6 +220,18 @@ def update_price(request):
         w = Watchlist.objects.filter(user=request.user, product__pk=pk).get()
         w.desire_price = desire_price
         w.save()
+        return HttpResponse(json.dumps({'info': 0}), content_type="application/json")
+
+@csrf_exempt
+def update_description(request):
+    if request.method == 'POST':
+        j = json.loads(request.body)
+        pk = j.get('pk', None)
+        print pk
+        description = j.get('description', None)
+        p = Page.objects.filter(pk=pk).get()
+        p.description = description
+        p.save()
         return HttpResponse(json.dumps({'info': 0}), content_type="application/json")
 
 def sync(request):
