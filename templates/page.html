@@ -31,7 +31,7 @@
                 <td><input type="checkbox" ng-model="selected[page.pk]"/></td>
                 <td><a href="/store/{{ store_name }}/page/show/{{ page.pk }}"><span class="glyphicon glyphicon-plus"></span></a></td>
                 <td><a href="" editable-text="page.fields.description" onbeforesave="updateDescription(page.pk, $data)">{{ page.fields.description }}<a> <a href="{{ page.fields.url }}" target="_blank"><span class="glyphicon glyphicon-arrow-right"></span></a> </td>
-                <td>{{ page.fields.error_text }}</td>
+                <td>{{ page.fields.status_text }}</td>
               </tr>
             </tbody>
           </table>

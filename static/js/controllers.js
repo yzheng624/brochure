@@ -278,6 +278,7 @@ app.controller('mainCntl', ['$scope', 'productFactory', '$routeParams', '$locati
                 $scope.selected[pages[i].pk] = false;
                 pages[i].fields.discount_amount = parseFloat(pages[i].fields.original_price) - parseFloat(pages[i].fields.current_price);
                 pages[i].fields.discount_percentage = parseFloat(pages[i].fields.discount_amount) / parseFloat(pages[i].fields.original_price);
+                pages[i].fields.status_text = 'Last Update: ' + pages[i].fields.last_update;
             }
             $scope.spinner.stop();
             $scope.pages = pages;
