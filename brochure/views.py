@@ -26,6 +26,7 @@ def home(request):
     else:
         return redirect('/signup/')
 
+
 def signin(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -44,6 +45,7 @@ def signin(request):
         c.update(csrf(request))
         return render_to_response('signin.html', c)
 
+
 def signup(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -59,9 +61,11 @@ def signup(request):
         c.update(csrf(request))
         return render_to_response('signup.html', c)
 
+
 def signout(request):
     logout(request)
     return redirect('/')
+
 
 @csrf_exempt
 def query(request):
@@ -87,10 +91,13 @@ def query(request):
             product = home.query(url)
         info = ''
         if Product.objects.filter(uuid=product['uuid'], website=store_name).exists():
-            if Watchlist.objects.filter(user=request.user, product=Product.objects.filter(uuid=product['uuid'], website=store_name).get()).exists():
+            if Watchlist.objects.filter(user=request.user,
+                                        product=Product.objects.filter(uuid=product['uuid'],
+                                                                       website=store_name).get()).exists():
                 info = 'Item has already been added.'
         product['info'] = info
         return HttpResponse(json.dumps(product), content_type="application/json")
+
 
 @csrf_exempt
 def get_items(request):
@@ -98,11 +105,13 @@ def get_items(request):
     products = Product.objects.filter(website=store_name, watchlist__user=request.user).all()
     return HttpResponse(serializers.serialize('json', products), content_type="application/json")
 
+
 @csrf_exempt
 def get_watchlist(request):
     store_name = json.loads(request.body).get('store_name', None)
     watchlist = Watchlist.objects.filter(product__website=store_name, user=request.user)
     return HttpResponse(serializers.serialize('json', watchlist), content_type="application/json")
+
 
 @csrf_exempt
 def get_pages(request):
@@ -110,12 +119,14 @@ def get_pages(request):
     pages = Page.objects.filter(user=request.user, store_name=store_name)
     return HttpResponse(serializers.serialize('json', pages), content_type="application/json")
 
+
 @csrf_exempt
 def get_page_products(request):
     pk = json.loads(request.body).get('pk', None)
     page = Page.objects.filter(pk=pk).get()
     products = page.product.all()
     return HttpResponse(serializers.serialize('json', products), content_type="application/json")
+
 
 @csrf_exempt
 def add_item(request):
@@ -135,6 +146,7 @@ def add_item(request):
         w = Watchlist(user=request.user, product=p, desire_price=desire_price, email=email)
         w.save()
         return HttpResponse(json.dumps({'info': 0}), content_type="application/json")
+
 
 @csrf_exempt
 def add_page(request):
@@ -171,22 +183,36 @@ def add_page(request):
             product = spider.query(url)
             #except:
             #    continue
-            p = Product(name=product['name'], url=url, current_price=product['current_price'], original_price=product['original_price'],
-                        error=False, website=store_name, uuid=product['uuid'], type=product['type'], json={})
+            p = Product(name=product['name'], url=url, current_price=product['current_price'],
+                        original_price=product['original_price'], error=False, website=store_name,
+                        uuid=product['uuid'], type=product['type'], json={})
             p.save()
             page.product.add(p)
             page.save()
         return HttpResponse(json.dumps({'info': 0}), content_type="application/json")
+
 
 @csrf_exempt
 def delete_items(request):
     if request.method == 'POST':
         dic = json.loads(request.body)
         for key in dic:
-            if dic[key] == True:
+            if dic[key]:
                 w = Watchlist.objects.filter(product__pk=key)
                 w.delete()
     return HttpResponse(json.dumps({'info': 0}), content_type="application/json")
+
+
+@csrf_exempt
+def delete_pages(request):
+    if request.method == 'POST':
+        dic = json.loads(request.body)
+        for key in dic:
+            if dic[key]:
+                p = Page.objects.filter(pk=key)
+                p.delete()
+    return HttpResponse(json.dumps({'info': 0}), content_type="application/json")
+
 
 @csrf_exempt
 def set_mark(request):
@@ -197,6 +223,7 @@ def set_mark(request):
         w.mark = (w.mark == False)
         w.save()
     return HttpResponse(json.dumps({'info': 0}), content_type="application/json")
+
 
 @csrf_exempt
 def save_settings(request):
@@ -211,6 +238,7 @@ def save_settings(request):
         s.save()
         return redirect('/')
 
+
 @csrf_exempt
 def update_price(request):
     if request.method == 'POST':
@@ -221,6 +249,7 @@ def update_price(request):
         w.desire_price = desire_price
         w.save()
         return HttpResponse(json.dumps({'info': 0}), content_type="application/json")
+
 
 @csrf_exempt
 def update_description(request):
@@ -234,12 +263,13 @@ def update_description(request):
         p.save()
         return HttpResponse(json.dumps({'info': 0}), content_type="application/json")
 
+
 def sync(request):
     management.call_command('runcrons')
     return HttpResponse(json.dumps({'info': 0}), content_type="application/json")
 
 
-def product_html(reqest):
+def product_html(request):
     return render_to_response('product.html')
 
 
@@ -257,6 +287,7 @@ def add_product_html(request):
 
 def add_page_html(request):
     return render_to_response('add_page.html')
+
 
 def page_products_html(request):
     return render_to_response('page_products.html')

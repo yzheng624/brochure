@@ -101,6 +101,10 @@ app.factory('productFactory', ['$http', function ($http) {
         return $http.post(urlBase + 'update_description/', data);
     };
 
+    productFactory.deletePages = function (data) {
+        return $http.post(urlBase + 'delete_pages/', data);
+    }
+
     return productFactory;
 }]);
 
@@ -208,11 +212,6 @@ app.controller('mainCntl', ['$scope', 'productFactory', '$routeParams', '$locati
     };
     $scope.selected = {};
     $scope.deleteItems = function () {
-        for (pk in $scope.selected) {
-            console.log(pk);
-            console.log($scope.selected[pk]);
-        }
-        console.log($scope.selected);
         productFactory.deleteItems($scope.selected).success(function (info) {
             $scope.itemClicked($scope.store_name);
         });
@@ -314,6 +313,12 @@ app.controller('mainCntl', ['$scope', 'productFactory', '$routeParams', '$locati
         }).error(function (info) {
             $scope.spinner.stop();
             $('#info').modal('show');
+        });
+    };
+    $scope.deletePages = function () {
+        console.log($scope.selected);
+        productFactory.deletePages($scope.selected).success(function (info) {
+            $location.path('/store/' + $routeParams['store_name'] + '/' + $routeParams['page_name']);
         });
     };
 }]);
