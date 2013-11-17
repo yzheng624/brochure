@@ -51,11 +51,11 @@ class BestBuySpider(BaseSpider):
         if url.startswith('https://clearance.bestbuy.com'):
             original_price = re.findall(r'original-price">\$([\d.,]+)</span>', html, re.DOTALL)
             current_price = re.findall(r'<div class="your-price(?:.*?)">\$([\d.,]+)</div>', html, re.DOTALL)
-            name = re.findall(r'<meta property="og:title" content="(.*?)"/>', html, re.DOTALL)
+            name = re.findall(r'<h1>(.*?)</h1>', html, re.DOTALL)
             sku = re.findall(r'<span><strong>SKU:</strong> ([\d]+)</span>', html, re.DOTALL)
             print original_price, current_price
             p = {
-                'name': name[0],
+                'name': name[1],
                 'type': 'None',
                 'current_price': original_price[0],
                 'original_price': current_price[0],
@@ -97,7 +97,7 @@ class BestBuySpider(BaseSpider):
         if url.startswith('https://clearance.bestbuy.com'):
             r = requests.get(url, headers=self.headers)
             html = r.content
-            t = re.findall(r'<a href="(.+?)">', html, re.DOTALL)
+            t = re.findall(r'<a href="(.+?)" class="pricing-link">', html, re.DOTALL)
             for i in range(len(t)):
                 t[i] = 'https://clearance.bestbuy.com' + t[i]
         else:
