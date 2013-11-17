@@ -31,6 +31,9 @@ var app = angular.module('brochureApp', ['ngRoute', 'ngResource', 'ngSanitize', 
       controller: 'mainCntl',
       controllerAs: 'main'
     });
+    $routeProvider.otherwise({
+      redirectTo: '/'
+    });
 
     // configure html5 to get links working on jsfiddle
     $locationProvider.html5Mode(true);
@@ -278,7 +281,7 @@ app.controller('mainCntl', ['$scope', 'productFactory', '$routeParams', '$locati
                 $scope.selected[pages[i].pk] = false;
                 pages[i].fields.discount_amount = parseFloat(pages[i].fields.original_price) - parseFloat(pages[i].fields.current_price);
                 pages[i].fields.discount_percentage = parseFloat(pages[i].fields.discount_amount) / parseFloat(pages[i].fields.original_price);
-                pages[i].fields.status_text = 'Last Update: ' + pages[i].fields.last_update;
+                pages[i].fields.status_text = 'Last Update: ' + pages[i].fields.last_update + ' | Total: ' + pages[i].fields.product.length + ' | Error: todo';
             }
             $scope.spinner.stop();
             $scope.pages = pages;
@@ -320,6 +323,34 @@ app.controller('mainCntl', ['$scope', 'productFactory', '$routeParams', '$locati
         console.log($scope.selected);
         productFactory.deletePages($scope.selected).success(function (info) {
             $location.path('/store/' + $routeParams['store_name'] + '/' + $routeParams['page_name']);
+        });
+    };
+    $scope.updateLeastPrice = function (pk, least_price) {
+        var target = $("body")[0];
+        $scope.spinner = Spinner(opts).spin(target);
+        data = {
+            'pk': pk,
+            'least_price': least_price
+        };
+        productFactory.updateLeastPrice(data).success(function (info) {
+            $scope.spinner.stop();
+        }).error(function (info) {
+            $scope.spinner.stop();
+            $('#info').modal('show');
+        });
+    };
+    $scope.updateDiscount = function (pk, discount) {
+        var target = $("body")[0];
+        $scope.spinner = Spinner(opts).spin(target);
+        data = {
+            'pk': pk,
+            'discount': discount
+        };
+        productFactory.updateDiscount(data).success(function (info) {
+            $scope.spinner.stop();
+        }).error(function (info) {
+            $scope.spinner.stop();
+            $('#info').modal('show');
         });
     };
 }]);
