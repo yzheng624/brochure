@@ -31,6 +31,7 @@ class Page(models.Model):
     store_name = models.CharField(max_length=100)
     mark = models.BooleanField(default=True)
     product = models.ManyToManyField(Product)
+    type = models.CharField(max_length=100)
 
     def __unicode__(self):
         return self.description

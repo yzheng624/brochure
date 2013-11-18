@@ -108,11 +108,16 @@ class BestBuySpider(BaseSpider):
             for i in range(len(t)):
                 t[i] = 'http://www.bestbuy.com' + t[i]
             if len(t) > 0:
+                if not url.endswith('&cp=1'):
+                    url += '&cp=1'
                 q = url.split('=')
                 url_raw = ''
                 for p in q[:-1]:
                     url_raw += p + '='
-                t.extend(self.query_page(url_raw + str(int(q[-1]) + 1)))
+                try:
+                    t.extend(self.query_page(url_raw + str(int(q[-1]) + 1)))
+                except:
+                    pass
         return t
 
     @staticmethod

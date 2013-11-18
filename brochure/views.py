@@ -119,8 +119,11 @@ def get_watchlist(request):
 
 @csrf_exempt
 def get_pages(request):
-    store_name = json.loads(request.body).get('store_name', None)
-    pages = Page.objects.filter(user=request.user, store_name=store_name)
+    j = json.loads(request.body)
+    store_name = j.get('store_name', None)
+    type = j.get('type', None)
+    print type
+    pages = Page.objects.filter(user=request.user, store_name=store_name, type=type)
     return HttpResponse(serializers.serialize('json', pages), content_type="application/json")
 
 
@@ -173,8 +176,9 @@ def add_page(request):
         discount = j.get('discount', None)
         email = j.get('email', None)
         store_name = j.get('store_name', None)
+        type = j.get('type', None)
         page = Page(url=url, description=description, error=False, user=request.user, least_price=least_price,
-                    discount=discount, email=email, store_name=store_name)
+                    discount=discount, email=email, store_name=store_name, type=type)
         page.save()
         url_list = []
         spider = None

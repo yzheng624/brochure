@@ -88,8 +88,10 @@ app.factory('productFactory', ['$http', function ($http) {
         return $http.post(urlBase + 'add_page/', data);
     };
 
-    productFactory.getAllPages = function (store_name) {
-        data = {'store_name': store_name};
+    productFactory.getAllPages = function (store_name, type) {
+        data = {'store_name': store_name,
+            'type': type
+        };
         return $http.post(urlBase + 'get_pages/', data);
     };
 
@@ -260,7 +262,8 @@ app.controller('mainCntl', ['$scope', 'productFactory', '$routeParams', '$locati
             'description': $scope.new.description,
             'least_price': $scope.new.least_price,
             'discount': $scope.new.discount_percentage,
-            'email': $scope.new.email
+            'email': $scope.new.email,
+            'type': $routeParams['page_name']
         };
         productFactory.addPage(data, $scope.store_name).success(function (info) {
             $scope.spinner.stop();
@@ -272,10 +275,11 @@ app.controller('mainCntl', ['$scope', 'productFactory', '$routeParams', '$locati
     };
     $scope.pageClicked = function (store_name) {
         $scope.store_name = store_name;
+        $scope.type = $routeParams['page_name'];
         $('li').removeClass('active');
         var target = $("body")[0];
         $scope.spinner = Spinner(opts).spin(target);
-        productFactory.getAllPages(store_name).success(function (pages) {
+        productFactory.getAllPages(store_name, $routeParams['page_name']).success(function (pages) {
             $scope.selected = {};
             for (var i = 0; i < pages.length; i++) {
                 $scope.selected[pages[i].pk] = false;
