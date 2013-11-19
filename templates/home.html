@@ -53,7 +53,6 @@
                 </li>
                 <li id="radioList">
                   <a href="/store/radio/page">RadioShack</a>
-
                 </li>
                 <li id="homeList">
                   <a href="/store/home/page">Homedepot</a>
@@ -89,24 +88,96 @@
                   </div>
                   <form class="form-horizontal" role="form" action="/save_settings/" method="post">
                     <div class="modal-body">
+                      <h3>Per Page</h3>
+                      <hr/>
                       <div class="form-group">
-                        <label for="inputEmail3" class="col-sm-2 control-label">Email</label>
+                        <label for="inputEmail3" class="col-sm-2 control-label">BB Single</label>
                         <div class="col-sm-10">
-                          <input type="email" class="form-control" name="email" placeholder="Email" value="{{ request.user.email }}">
+                          <input type="number" class="form-control" name="bb_single_page" placeholder="20" value="{{ s.bb_single_page }}">
                         </div>
                       </div>
                       <div class="form-group">
-                        <label for="inputEmail3" class="col-sm-2 control-label">Per Product (minutes)</label>
+                        <label for="inputEmail3" class="col-sm-2 control-label">BB Promotion</label>
                         <div class="col-sm-10">
-                          <input type="number" class="form-control" name="per_product" placeholder="20" value="{{ s.per_product }}">
+                          <input type="number" class="form-control" name="bb_promotion_page" placeholder="20" value="{{ s.bb_promotion_page }}">
                         </div>
                       </div>
                       <div class="form-group">
-                        <label for="inputEmail3" class="col-sm-2 control-label">Per Round (minutes)</label>
+                        <label for="inputEmail3" class="col-sm-2 control-label">BB Instore</label>
                         <div class="col-sm-10">
-                          <input type="number" class="form-control" name="per_round" placeholder="20" value="{{ s.per_round }}">
+                          <input type="number" class="form-control" name="bb_instore_page" placeholder="20" value="{{ s.bb_instore_page }}">
                         </div>
                       </div>
+                      <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-2 control-label">BB Regional</label>
+                        <div class="col-sm-10">
+                          <input type="number" class="form-control" name="bb_regional_page" placeholder="20" value="{{ s.bb_regional_page }}">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-2 control-label">MSStore</label>
+                        <div class="col-sm-10">
+                          <input type="number" class="form-control" name="msstore_page" placeholder="20" value="{{ s.msstore_page }}">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-2 control-label">RadioShack</label>
+                        <div class="col-sm-10">
+                          <input type="number" class="form-control" name="radioshack_page" placeholder="20" value="{{ s.radioshack_page }}">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-2 control-label">HomeDepot</label>
+                        <div class="col-sm-10">
+                          <input type="number" class="form-control" name="homedepot_page" placeholder="20" value="{{ s.homedepot_page }}">
+                        </div>
+                      </div>
+                      <h3>Per Round</h3>
+                      <hr/>
+                      <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-2 control-label">BB Single</label>
+                        <div class="col-sm-10">
+                          <input type="number" class="form-control" name="bb_single_round" placeholder="20" value="{{ s.bb_single_round }}">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-2 control-label">BB Promotion</label>
+                        <div class="col-sm-10">
+                          <input type="number" class="form-control" name="bb_promotion_round" placeholder="20" value="{{ s.bb_promotion_round }}">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-2 control-label">BB Instore</label>
+                        <div class="col-sm-10">
+                          <input type="number" class="form-control" name="bb_instore_round" placeholder="20" value="{{ s.bb_instore_round }}">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-2 control-label">BB Regional</label>
+                        <div class="col-sm-10">
+                          <input type="number" class="form-control" name="bb_regional_round" placeholder="20" value="{{ s.bb_regional_round }}">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-2 control-label">MSStore</label>
+                        <div class="col-sm-10">
+                          <input type="number" class="form-control" name="msstore_round" placeholder="20" value="{{ s.msstore_round }}">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-2 control-label">RadioShack</label>
+                        <div class="col-sm-10">
+                          <input type="number" class="form-control" name="radioshack_round" placeholder="20" value="{{ s.radioshack_round }}">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-2 control-label">HomeDepot</label>
+                        <div class="col-sm-10">
+                          <input type="number" class="form-control" name="homedepot_round" placeholder="20" value="{{ s.homedepot_round }}">
+                        </div>
+                      </div>
+                      <h3>Filter Condition</h3>
+                      <hr/>
                       <div class="form-group">
                         <label for="inputEmail3" class="col-sm-2 control-label">Amount</label>
                         <div class="col-sm-10">

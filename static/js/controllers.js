@@ -255,6 +255,7 @@ app.controller('mainCntl', ['$scope', 'productFactory', '$routeParams', '$locati
         });
     };
     $scope.submitPage = function () {
+        console.log($routeParams);
         var target = $("body")[0];
         $scope.spinner = Spinner(opts).spin(target);
         data = {

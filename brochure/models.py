@@ -50,8 +50,8 @@ class Watchlist(models.Model):
 
 class Setting(models.Model):
     user = models.ForeignKey(User)
-    per_product = models.IntegerField(default=60)
-    per_round = models.IntegerField(default=60)
+    product = models.IntegerField(default=60)
+    round = models.IntegerField(default=60)
     amount = models.DecimalField(default=25, decimal_places=4, max_digits=10)
     percent = models.DecimalField(default=0.9, decimal_places=4, max_digits=10)
 
