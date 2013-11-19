@@ -62,7 +62,7 @@ class MSStoreSpider(BaseSpider):
         try:
             p['original_price'] = original[0].replace(',', '')
         except:
-            p['original_price'] = 0.0
+            p['original_price'] = p['current_price']
         type = re.findall(r'busgrp : \[\'([\w]+)\'\]', html)
         p['type'] = type[0]
         #except:
